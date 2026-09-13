@@ -1,0 +1,100 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import { SiteShell } from "@/components/layout/header";
+import { PageHero } from "@/components/page-hero";
+import { EnquireForm } from "@/components/enquire-form";
+import { SITE, fullAddress, whatsappHref } from "@/data/site";
+import { pageHead } from "@/lib/seo";
+import { MediaImg } from "@/components/product-photo";
+
+export const Route = createFileRoute("/contact")({
+  component: ContactPage,
+  head: () =>
+    pageHead(
+      "Contact",
+      "Visit Sadhguru Gems & Jewellers at 106 New Sunil Nagar, Akkalkot Road, Solapur. Call +91 70207 35981 or write on WhatsApp.",
+      "/contact",
+    ),
+});
+
+function ContactPage() {
+  return (
+    <SiteShell>
+      <PageHero
+        kicker="Contact"
+        title="The door on Akkalkot Road."
+        lede="Walk in, write, or call. Stones are easier to choose in the hand than on a screen — but an enquiry first is welcome."
+      />
+      <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2">
+        <div>
+          <ul className="space-y-6">
+            <li className="flex gap-4">
+              <MapPin className="mt-0.5 size-5 text-garnet" />
+              <div>
+                <p className="text-xs tracking-[0.16em] text-stone uppercase">Address</p>
+                <p className="mt-1 leading-relaxed">{fullAddress()}</p>
+                <a
+                  href={SITE.mapsLink}
+                  className="mt-1 inline-block text-sm text-garnet hover:text-garnet-deep"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Open in Google Maps
+                </a>
+              </div>
+            </li>
+            <li className="flex gap-4">
+              <Phone className="mt-0.5 size-5 text-garnet" />
+              <div>
+                <p className="text-xs tracking-[0.16em] text-stone uppercase">Phone & WhatsApp</p>
+                <a href={SITE.phoneHref} className="mt-1 block">
+                  {SITE.phone}
+                </a>
+                <a href={whatsappHref()} className="text-sm text-garnet">
+                  Message on WhatsApp
+                </a>
+              </div>
+            </li>
+            <li className="flex gap-4">
+              <Mail className="mt-0.5 size-5 text-garnet" />
+              <div>
+                <p className="text-xs tracking-[0.16em] text-stone uppercase">Email</p>
+                <a href={SITE.emailHref} className="mt-1 block">
+                  {SITE.email}
+                </a>
+              </div>
+            </li>
+            <li className="flex gap-4">
+              <Clock className="mt-0.5 size-5 text-garnet" />
+              <div>
+                <p className="text-xs tracking-[0.16em] text-stone uppercase">Hours</p>
+                <p className="mt-1">
+                  {SITE.hours}
+                  <br />
+                  {SITE.hoursNote}
+                </p>
+              </div>
+            </li>
+          </ul>
+          <a
+            href={SITE.mapsLink}
+            target="_blank"
+            rel="noreferrer"
+            className="relative mt-10 block overflow-hidden rounded-[22px] shadow-card"
+          >
+            <MediaImg
+              src="/images/showroom.jpg"
+              alt="The shop on Akkalkot Road, Solapur"
+              className="h-64 w-full object-cover"
+              sizes="100vw"
+            />
+            <span className="absolute inset-x-0 bottom-0 bg-ink/75 px-5 py-4 text-sm text-parchment">
+              {SITE.address.line1}, {SITE.address.locality} — open in Google Maps
+            </span>
+          </a>
+        </div>
+        <EnquireForm heading="Write to the shop" subject="Website enquiry" />
+      </section>
+    </SiteShell>
+  );
+}

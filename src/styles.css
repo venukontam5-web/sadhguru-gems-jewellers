@@ -1,0 +1,256 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Cormorant Garamond", "Palatino Linotype", Palatino, serif;
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+
+  --color-parchment: #f6f1e8;
+  --color-parchment-deep: #ebe3d4;
+  --color-ivory: #fffbf4;
+  --color-ink: #1a1410;
+  --color-ink-soft: #2c241e;
+  --color-ink-muted: #5c5148;
+  --color-stone: #8a7b6c;
+  --color-garnet: #8c2f39;
+  --color-garnet-deep: #6e242c;
+  --color-bronze: #a68554;
+  --color-bronze-soft: #c4a574;
+  --color-line: #e6dccb;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 18px;
+  --radius-xl: 28px;
+
+  --shadow-border:
+    0px 0px 0px 1px rgb(26 20 16 / 0.06),
+    0px 1px 2px -1px rgb(26 20 16 / 0.06),
+    0px 2px 4px 0px rgb(26 20 16 / 0.04);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+    font-size: var(--site-root-size, 16px);
+  }
+
+  body {
+    background: var(--color-parchment);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  img {
+    outline: 1px solid rgb(26 20 16 / 0.08);
+    outline-offset: -1px;
+  }
+
+  img.brand-logo,
+  img.hero-media,
+  img.product-shot {
+    outline: none;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-garnet) 22%, transparent);
+    color: var(--color-ink);
+  }
+}
+
+@utility shadow-card {
+  box-shadow: var(--shadow-border);
+}
+
+@utility product-photo {
+  background-color: var(--color-ivory);
+  background-image: radial-gradient(ellipse at 50% 40%, rgb(255 255 255 / 0.55), transparent 62%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .ken-burns {
+    animation: none !important;
+  }
+}
+
+.hero-plain-field,
+.blend-field {
+  position: relative;
+  isolation: isolate;
+  background-color: #1a1410;
+  color: var(--color-parchment);
+}
+
+.hero-cloth,
+.blend-cloth,
+.blend-photo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+.hero-gilt,
+.blend-gilt {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(ellipse 82% 52% at 84% 0%, rgb(166 133 84 / 0.58), transparent 58%),
+    radial-gradient(ellipse 42% 38% at 8% 100%, rgb(140 47 57 / 0.2), transparent 55%);
+}
+
+.hero-wash,
+.blend-wash {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgb(26 20 16 / 0.88) 0%,
+    rgb(26 20 16 / 0.34) 48%,
+    rgb(26 20 16 / 0.08) 100%
+  );
+}
+
+.hero-stage,
+.blend-stage {
+  position: relative;
+  z-index: 3;
+  isolation: isolate;
+}
+
+.hero-slot {
+  isolation: isolate;
+  mix-blend-mode: normal;
+}
+
+.blend-kicker {
+  color: var(--color-bronze-soft);
+  isolation: isolate;
+}
+
+@media (min-width: 768px) {
+  .blend-photo {
+    mix-blend-mode: soft-light;
+  }
+  .blend-gilt {
+    mix-blend-mode: overlay;
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blend-photo,
+  .blend-gilt,
+  .blend-wash {
+    mix-blend-mode: normal;
+  }
+}
+
+@media (forced-colors: active) {
+  .hero-cloth,
+  .blend-cloth,
+  .blend-photo,
+  .hero-gilt,
+  .blend-gilt,
+  .hero-wash,
+  .blend-wash {
+    mix-blend-mode: normal;
+  }
+}
+
+.hero-slot-scroll {
+  scrollbar-width: none;
+}
+.hero-slot-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes ken {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+.ken-burns {
+  animation: ken 9s ease-in-out alternate infinite;
+}
+
+@media print {
+  .print-hidden {
+    display: none !important;
+  }
+}
+
+/* Owner desk: ivory paper, sage rail, dark type */
+.sgj-desk {
+  --color-parchment: #1a1410;
+  --color-parchment-deep: #2c241e;
+  background-color: #fffbf4;
+  color: #1a1410;
+}
+
+.sgj-desk [class*="border-white/"] {
+  border-color: rgb(26 20 16 / 0.12);
+}
+
+.sgj-desk [class*="bg-white/4"],
+.sgj-desk [class*="bg-white/5"],
+.sgj-desk [class*="bg-white/6"],
+.sgj-desk [class*="bg-white/8"] {
+  background-color: #ffffff;
+  box-shadow: 0 1px 2px rgb(26 20 16 / 0.05);
+}
+
+.sgj-desk [class*="bg-white/10"],
+.sgj-desk [class*="bg-white/12"] {
+  background-color: rgb(46 90 62 / 0.12);
+}
+
+.sgj-desk [class*="bg-black/"] {
+  background-color: #ffffff;
+}
+
+.sgj-desk [class*="bg-[#08110e]"],
+.sgj-desk [class*="bg-[#0c1612]"],
+.sgj-desk [class*="bg-[#0f1c18]"] {
+  background-color: #fffbf4;
+  color: #1a1410;
+}
+
+.sgj-desk .owner-topbar {
+  background-color: rgb(255 251 244 / 0.94);
+  backdrop-filter: blur(8px);
+}
