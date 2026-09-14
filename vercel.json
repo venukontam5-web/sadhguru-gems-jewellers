@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "name": "sgj-live",
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "git": {
+    "deploymentEnabled": true
+  }
+}

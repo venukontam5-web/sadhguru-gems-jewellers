@@ -1,0 +1,40 @@
+name: Live on Vercel
+
+on:
+  push:
+    branches: [main]
+    tags: ["live-*"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Skip without Vercel token
+        if: ${{ secrets.VERCEL_TOKEN == '' }}
+        run: echo "Add GitHub secret VERCEL_TOKEN, plus variables VERCEL_ORG_ID and VERCEL_PROJECT_ID."
+      - name: Install
+        if: ${{ secrets.VERCEL_TOKEN != '' }}
+        run: npm ci
+      - name: Pull
+        if: ${{ secrets.VERCEL_TOKEN != '' }}
+        run: npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+      - name: Build
+        if: ${{ secrets.VERCEL_TOKEN != '' }}
+        run: npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+      - name: Deploy
+        if: ${{ secrets.VERCEL_TOKEN != '' }}
+        run: npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}

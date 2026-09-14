@@ -1,24 +1,27 @@
 # Sadhguru Gems & Jewellers
 
-Official shop: [www.sadhgurugemsandjewellers.com](https://www.sadhgurugemsandjewellers.com)
+Live: [www.sadhgurugemsandjewellers.com](https://www.sadhgurugemsandjewellers.com)
 
-## Go live (one import)
+| | |
+|---|---|
+| **GitHub** | [venukontam5-web/www.sadhgurugemsandjewellers.com](https://github.com/venukontam5-web/www.sadhgurugemsandjewellers.com) |
+| **Vercel** | project `sgj-live` (`prj_W2UkDNzy1127kPERiyvGPWCW8LeI`) |
+| **Domain** | www.sadhgurugemsandjewellers.com |
 
-1. Open this link while signed into Vercel with GitHub:
+GitHub is the book. Vercel hangs the name. Push to `main` (or tag `live-*`) publishes.
 
-   https://vercel.com/new/import?s=https://github.com/venukontam5-web/sadhguru-gems-jewellers
+## Join them (once)
 
-2. Click **Deploy**.
-3. **Settings → Domains → Add**
-   - `www.sadhgurugemsandjewellers.com`
-   - `sadhgurugemsandjewellers.com`
-4. At the registrar, point DNS:
+1. [Import this repo into Vercel](https://vercel.com/new/import?s=https://github.com/venukontam5-web/www.sadhgurugemsandjewellers.com) while signed in with GitHub.
+2. If a project named `sgj-live` already exists, open it → **Settings → Git → Connect** this repository.
+3. **Settings → Domains → Add** `www.sadhgurugemsandjewellers.com` and `sadhgurugemsandjewellers.com`.
+4. DNS at the registrar:
 
    | Type | Name | Value |
    |---|---|---|
    | A | `@` | `76.76.21.21` |
    | CNAME | `www` | `cname.vercel-dns.com` |
 
-Use the exact records Vercel prints if they differ.
+5. **Settings → Git → Deploy Hooks** → name `sgj-live`, branch `main`. Paste the URL on Admin → Live website.
 
-Do not buy the domain again. You already own it.
+Do not buy the domain again.
