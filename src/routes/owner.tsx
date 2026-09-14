@@ -53,7 +53,7 @@ type DeskLink = {
 
 const MAIN: DeskLink[] = [
   { to: "/owner", label: "Dashboard", icon: LayoutDashboard, cap: "desk" },
-  { to: "/owner/ads", label: "Google Ads", icon: Megaphone, cap: "appearance" },
+  { to: "/owner/ads", label: "Analytics", icon: Megaphone, cap: "appearance" },
   { to: "/owner/products", label: "Products", icon: Package, cap: "products" },
   { to: "/owner/slides", label: "Slides", icon: Images, cap: "slides" },
   { to: "/owner/social", label: "Social post", icon: Share2, cap: "social" },

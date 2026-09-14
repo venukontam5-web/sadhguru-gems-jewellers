@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { cartCount, cartTotal, readCart, upsertLine, writeCart, type CartLine } from "@/lib/cart";
+import { trackAddToCart } from "@/lib/analytics";
 
 type CartCtx = {
   lines: CartLine[];
@@ -27,6 +28,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const add = useCallback((line: Omit<CartLine, "qty"> & { qty?: number }) => {
     setLines((cur) => upsertLine(cur, line));
+    trackAddToCart({
+      id: line.productId,
+      slug: line.slug,
+      name: line.name,
+      priceInr: line.priceInr,
+      qty: line.qty ?? 1,
+    });
   }, []);
   const setQty = useCallback((productId: number, qty: number) => {
     setLines((cur) =>
