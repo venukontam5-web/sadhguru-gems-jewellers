@@ -27,6 +27,7 @@ import {
   BookOpen,
   Trophy,
   CreditCard,
+  Globe,
 } from "lucide-react";
 import { RedirectToSignIn, UserButton } from "@/lib/auth/gates";
 import { useDeskAccess } from "@/lib/use-staff";
@@ -89,6 +90,7 @@ const COUNTER: DeskLink[] = [
   },
   { to: "/owner/gst", label: "GST rate chart", icon: BookOpen, cap: "bills" },
   { to: "/owner/payments", label: "Razorpay", icon: CreditCard, cap: "appearance" },
+  { to: "/owner/live", label: "Live website", icon: Globe, cap: "appearance" },
   {
     to: "/owner/inventory",
     label: "Inventory",

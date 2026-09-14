@@ -30,6 +30,10 @@ function OwnerSettings() {
           Razorpay →
         </Link>
         <span className="mx-2 text-parchment/30">·</span>
+        <Link to="/owner/live" className="text-bronze hover:text-bronze-soft">
+          Live website →
+        </Link>
+        <span className="mx-2 text-parchment/30">·</span>
         <Link to="/owner/users" className="text-bronze hover:text-bronze-soft">
           Users / roles →
         </Link>

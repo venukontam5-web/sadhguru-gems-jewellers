@@ -105,6 +105,12 @@ function OwnerHome() {
           <button type="button" onClick={load} className={cn(buttonVariants({ variant: "ivory", size: "sm" }))}>
             Refresh
           </button>
+          <Link
+            to="/owner/live"
+            className={cn(buttonVariants({ size: "sm" }), "border border-white/15 bg-white/5 text-parchment hover:bg-white/10", !can("appearance") && "hidden")}
+          >
+            Live website
+          </Link>
         </div>
       </div>
 
@@ -212,6 +218,14 @@ function TodayPane({
   const slides = data.slideList.filter((s) => s.kind !== "story");
   return (
     <div className="mt-6 space-y-8">
+      <Link
+        to="/owner/live"
+        className="block rounded-2xl border border-white/8 bg-white/4 p-5 no-underline"
+      >
+        <p className="text-[10px] tracking-[0.2em] text-bronze uppercase">Live</p>
+        <p className="mt-1 font-display text-2xl">www.sadhgurugemsandjewellers.com</p>
+        <p className="mt-1 font-mono text-xs text-parchment/50">Vercel ID saved on this desk</p>
+      </Link>
       <div className="flex gap-3 overflow-x-auto pb-1">
         {slides.map((s) => (
           <Link key={s.id} to="/owner/slides" className="relative shrink-0">
