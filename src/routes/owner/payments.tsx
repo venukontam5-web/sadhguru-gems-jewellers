@@ -13,7 +13,9 @@ function OwnerPayments() {
   const [merchantId, setMerchantId] = useState<string>(SITE.razorpayMerchantId);
   const [keyId, setKeyId] = useState("");
   const [keySecret, setKeySecret] = useState("");
+  const [webhookSecret, setWebhookSecret] = useState("");
   const [hasSecret, setHasSecret] = useState(false);
+  const [hasWebhookSecret, setHasWebhookSecret] = useState(false);
   const [busy, setBusy] = useState(false);
   const [testing, setTesting] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -26,6 +28,7 @@ function OwnerPayments() {
         setMerchantId(s.merchantId);
         setKeyId(s.keyId);
         setHasSecret(s.hasSecret);
+        setHasWebhookSecret(s.hasWebhookSecret);
       })
       .catch((err: unknown) => setError(err instanceof Error ? err.message : "Could not load keys."));
   }, []);
@@ -36,11 +39,13 @@ function OwnerPayments() {
     setSaved(false);
     setError(null);
     try {
-      const res = await saveRazorpaySettings({ data: { merchantId, keyId, keySecret } });
+      const res = await saveRazorpaySettings({ data: { merchantId, keyId, keySecret, webhookSecret } });
       setKeyId(res.keyId);
       setMerchantId(res.merchantId);
       if (keySecret.trim() || res.hasSecret) setHasSecret(true);
+      if (webhookSecret.trim() || res.hasWebhookSecret) setHasWebhookSecret(true);
       setKeySecret("");
+      setWebhookSecret("");
       setSaved(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save.");
@@ -106,8 +111,20 @@ function OwnerPayments() {
             autoComplete="off"
           />
         </div>
+        <div>
+          <Label htmlFor="hook">Webhook secret</Label>
+          <Input
+            id="hook"
+            type="password"
+            value={webhookSecret}
+            onChange={(e) => setWebhookSecret(e.target.value)}
+            placeholder={hasWebhookSecret ? "Saved — paste again only to replace" : "From Razorpay → Webhooks → Secret"}
+            className="bg-white/5 font-mono text-parchment"
+            autoComplete="off"
+          />
+        </div>
         <p className="text-xs text-parchment/50">
-          Webhook in Razorpay (payment.captured, order.paid):{" "}
+          Webhook URL (events: payment.captured, order.paid):{" "}
           <span className="font-mono break-all">{origin}/api/razorpay/webhook</span>
         </p>
         {saved ? <p className="text-sm text-bronze">Saved.</p> : null}

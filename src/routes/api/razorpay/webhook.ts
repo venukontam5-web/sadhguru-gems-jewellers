@@ -1,6 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createHmac } from "node:crypto";
+import { createHmac, timingSafeEqual } from "node:crypto";
 import { loadKeys, markPaidFromWebhook } from "@/server/razorpay";
+
+function goodSig(secret: string, raw: string, sig: string) {
+  if (!secret || !sig) return false;
+  const expected = createHmac("sha256", secret).update(raw).digest("hex");
+  const a = Buffer.from(expected);
+  const b = Buffer.from(sig);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
 
 export const Route = createFileRoute("/api/razorpay/webhook")({
   server: {
@@ -9,9 +17,9 @@ export const Route = createFileRoute("/api/razorpay/webhook")({
         const raw = await request.text();
         const sig = request.headers.get("x-razorpay-signature") || "";
         const keys = await loadKeys();
-        if (keys.keySecret && sig) {
-          const expected = createHmac("sha256", keys.keySecret).update(raw).digest("hex");
-          if (expected !== sig) return new Response("bad signature", { status: 400 });
+        const secret = keys.webhookSecret || keys.keySecret;
+        if (secret && !goodSig(secret, raw, sig)) {
+          return new Response("bad signature", { status: 400 });
         }
         let payload: {
           event?: string;

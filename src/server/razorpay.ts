@@ -18,11 +18,13 @@ async function loadKeys() {
     rzp_merchant_id: string | null;
     rzp_key_id: string | null;
     rzp_key_secret: string | null;
-  }>`select rzp_merchant_id, rzp_key_id, rzp_key_secret from shop_settings where id = 1`;
+    rzp_webhook_secret: string | null;
+  }>`select rzp_merchant_id, rzp_key_id, rzp_key_secret, rzp_webhook_secret from shop_settings where id = 1`;
   const merchantId = (row?.rzp_merchant_id || MERCHANT).trim() || MERCHANT;
   const keyId = asKeyId(row?.rzp_key_id ?? "");
   const keySecret = (row?.rzp_key_secret || "").trim();
-  return { merchantId, keyId, keySecret };
+  const webhookSecret = (row?.rzp_webhook_secret || "").trim();
+  return { merchantId, keyId, keySecret, webhookSecret };
 }
 
 async function rzpApi(path: string, init: { method?: string; body?: unknown } = {}) {
@@ -79,6 +81,7 @@ export const getRazorpaySettings = createServerFn({ method: "GET" })
       merchantId: keys.merchantId,
       keyId: keys.keyId,
       hasSecret: Boolean(keys.keySecret),
+      hasWebhookSecret: Boolean(keys.webhookSecret),
       ready: Boolean(keys.keyId),
       api: Boolean(keys.keyId && keys.keySecret),
     };
@@ -91,6 +94,7 @@ export const saveRazorpaySettings = createServerFn({ method: "POST" })
       merchantId: z.string().max(80),
       keyId: z.string().max(80),
       keySecret: z.string().max(120),
+      webhookSecret: z.string().max(120).optional(),
     }),
   )
   .handler(async ({ data }) => {
@@ -98,18 +102,20 @@ export const saveRazorpaySettings = createServerFn({ method: "POST" })
     const merchantId = data.merchantId.trim() || MERCHANT;
     const keyId = asKeyId(data.keyId);
     const incoming = data.keySecret.trim();
-    const [cur] = await sql<{ rzp_key_secret: string | null }>`
-      select rzp_key_secret from shop_settings where id = 1`;
+    const [cur] = await sql<{ rzp_key_secret: string | null; rzp_webhook_secret: string | null }>`
+      select rzp_key_secret, rzp_webhook_secret from shop_settings where id = 1`;
     const secret = incoming || cur?.rzp_key_secret || "";
+    const hook = (data.webhookSecret ?? "").trim() || cur?.rzp_webhook_secret || "";
     await sql`
-      insert into shop_settings (id, rzp_merchant_id, rzp_key_id, rzp_key_secret, updated_at)
-      values (1, ${merchantId}, ${keyId}, ${secret}, now())
+      insert into shop_settings (id, rzp_merchant_id, rzp_key_id, rzp_key_secret, rzp_webhook_secret, updated_at)
+      values (1, ${merchantId}, ${keyId}, ${secret}, ${hook}, now())
       on conflict (id) do update set
         rzp_merchant_id = excluded.rzp_merchant_id,
         rzp_key_id = excluded.rzp_key_id,
         rzp_key_secret = excluded.rzp_key_secret,
+        rzp_webhook_secret = excluded.rzp_webhook_secret,
         updated_at = now()`;
-    return { ok: true as const, keyId, merchantId, hasSecret: Boolean(secret) };
+    return { ok: true as const, keyId, merchantId, hasSecret: Boolean(secret), hasWebhookSecret: Boolean(hook) };
   });
 
 export const testRazorpayApi = createServerFn({ method: "POST" })
