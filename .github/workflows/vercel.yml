@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
     tags: ["live-*"]
+  schedule:
+    - cron: "30 3 * * *"
   workflow_dispatch:
 
 jobs:
@@ -16,7 +18,7 @@ jobs:
           node-version: 22
       - name: Skip without Vercel token
         if: ${{ secrets.VERCEL_TOKEN == '' }}
-        run: echo "Add GitHub secret VERCEL_TOKEN, plus variables VERCEL_ORG_ID and VERCEL_PROJECT_ID."
+        run: echo "Daily sync waiting. Add GitHub secret VERCEL_TOKEN plus variables VERCEL_ORG_ID and VERCEL_PROJECT_ID — or connect GitHub inside Vercel."
       - name: Install
         if: ${{ secrets.VERCEL_TOKEN != '' }}
         run: npm ci
