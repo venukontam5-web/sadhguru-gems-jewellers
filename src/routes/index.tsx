@@ -25,7 +25,7 @@ export const Route = createFileRoute("/")({
       ...base,
       links: [
         ...base.links,
-        { rel: "preload", href: "/images/hero-ring.webp", as: "image", type: "image/webp" },
+        { rel: "preload", href: "/images/ivory-flora.webp", as: "image", type: "image/webp" },
       ],
     };
   },
@@ -62,7 +62,7 @@ function Home() {
                 rounded="rounded-none"
                 className="aspect-[4/3]"
                 imgClassName="transition-transform duration-500 group-hover:scale-[1.03]"
-                priority={i < 2}
+                priority={i === 0}
               />
               <div className="p-6">
                 <h3 className="font-display text-2xl font-semibold">{c.title}</h3>
@@ -73,7 +73,7 @@ function Home() {
         </div>
       </section>
 
-      <section className="bg-ivory py-20">
+      <section className="cv-auto bg-ivory py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -99,7 +99,7 @@ function Home() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2">
+      <section className="cv-auto mx-auto grid max-w-6xl items-center gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2">
         <MediaImg
           src="/images/showroom.jpg"
           alt="The jewellery atelier interior"
@@ -142,13 +142,13 @@ function Home() {
         </div>
       </section>
 
-      <section className="px-4 pb-8 sm:px-6">
+      <section className="cv-auto px-4 pb-8 sm:px-6">
         <div className="mx-auto max-w-6xl">
           <RashiGuide />
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+      <section className="cv-auto mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-xs font-medium tracking-[0.22em] text-garnet uppercase">

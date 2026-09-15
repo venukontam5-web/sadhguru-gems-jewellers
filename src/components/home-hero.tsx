@@ -39,6 +39,9 @@ export function HomeHero() {
           alt=""
           className="hero-media pointer-events-none absolute inset-0 size-full object-cover opacity-45"
           sizes="100vw"
+          priority
+          width={1600}
+          height={900}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-ivory via-ivory/88 to-ivory/40" />
 

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getSql } from "@/lib/db";
 import { capMiddleware } from "@/server/staff";
 import { DEFAULT_THEME, type SiteTheme } from "@/lib/theme";
+import { memoClear, memoRead, memoWrite } from "@/lib/public-cache";
 
 type Row = {
   preset: string;
@@ -29,9 +30,11 @@ function mapRow(r: Row): SiteTheme {
 }
 
 export const getPublicTheme = createServerFn({ method: "GET" }).handler(async () => {
+  const hit = memoRead<SiteTheme>("theme");
+  if (hit) return hit;
   const sql = await getSql();
   const rows = await sql<Row>`select * from site_theme where id = 1 limit 1`;
-  return rows[0] ? mapRow(rows[0]) : DEFAULT_THEME;
+  return memoWrite("theme", rows[0] ? mapRow(rows[0]) : DEFAULT_THEME);
 });
 
 const themeInput = z.object({
@@ -66,5 +69,6 @@ export const saveSiteTheme = createServerFn({ method: "POST" })
         garnet = excluded.garnet,
         bronze = excluded.bronze,
         updated_at = now()`;
+    memoClear("theme");
     return { ok: true as const };
   });

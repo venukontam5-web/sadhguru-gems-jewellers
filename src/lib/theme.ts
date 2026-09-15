@@ -316,6 +316,17 @@ export function applyTheme(theme: SiteTheme, root: HTMLElement = document.docume
   root.style.fontSize = vars["--site-root-size"] ?? "16px";
   root.style.backgroundColor = theme.parchment;
   root.style.color = theme.ink;
+  const href = googleFontsHref(theme);
+  const existing = document.querySelector(
+    "link[href*='fonts.googleapis.com']",
+  ) as HTMLLinkElement | null;
+  if (existing) {
+    if (existing.getAttribute("data-sgj-fonts") !== href) {
+      existing.href = href;
+      existing.setAttribute("data-sgj-fonts", href);
+    }
+    return;
+  }
   const id = "sgj-theme-fonts";
   let link = document.getElementById(id) as HTMLLinkElement | null;
   if (!link) {
@@ -324,7 +335,7 @@ export function applyTheme(theme: SiteTheme, root: HTMLElement = document.docume
     link.rel = "stylesheet";
     document.head.appendChild(link);
   }
-  link.href = googleFontsHref(theme);
+  if (link.href !== href) link.href = href;
 }
 
 export function clearTheme(root: HTMLElement = document.documentElement) {
@@ -338,8 +349,8 @@ export function googleFontsHref(theme: SiteTheme) {
   const families = [theme.displayFont, theme.bodyFont]
     .map((f, i) =>
       i === 0
-        ? `family=${encodeURIComponent(f).replace(/%20/g, "+")}:ital,wght@0,600;0,700;1,500`
-        : `family=${encodeURIComponent(f).replace(/%20/g, "+")}:wght@400;500;600`,
+        ? `family=${encodeURIComponent(f).replace(/%20/g, "+")}:wght@600;700`
+        : `family=${encodeURIComponent(f).replace(/%20/g, "+")}:wght@400;500`,
     )
     .join("&");
   return `https://fonts.googleapis.com/css2?${families}&display=swap`;

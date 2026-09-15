@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { getSql } from "@/lib/db";
 import { capMiddleware } from "@/server/staff";
+import { memoClear, memoRead, memoWrite } from "@/lib/public-cache";
 
 export type SiteSettings = {
   gaId: string;
@@ -12,6 +13,8 @@ export type SiteSettings = {
 };
 
 export const getSiteSettings = createServerFn({ method: "GET" }).handler(async () => {
+  const hit = memoRead<SiteSettings>("settings");
+  if (hit) return hit;
   const sql = await getSql();
   const [row] = await sql<{
     ga_id: string;
@@ -20,13 +23,13 @@ export const getSiteSettings = createServerFn({ method: "GET" }).handler(async (
     gtm_id: string;
     search_console: string;
   }>`select ga_id, ads_id, ads_label, gtm_id, search_console from shop_settings where id = 1`;
-  return {
+  return memoWrite("settings", {
     gaId: row?.ga_id ?? "",
     adsId: row?.ads_id ?? "",
     adsLabel: row?.ads_label ?? "",
     gtmId: row?.gtm_id ?? "",
     searchConsole: row?.search_console ?? "",
-  } satisfies SiteSettings;
+  } satisfies SiteSettings);
 });
 
 export const saveSiteSettings = createServerFn({ method: "POST" })
@@ -52,6 +55,7 @@ export const saveSiteSettings = createServerFn({ method: "POST" })
         gtm_id = excluded.gtm_id,
         search_console = excluded.search_console,
         updated_at = now()`;
+    memoClear("settings");
     return { ok: true as const };
   });
 
