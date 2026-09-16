@@ -11,6 +11,7 @@ import { useDeskAccess } from "@/lib/use-staff";
 import { DESK_ROLES, hasCap, ROLE_COPY, type DeskRole } from "@/lib/rbac";
 import {
   Barcode,
+  Bot,
   BookOpen,
   FileInput,
   Images,
@@ -175,6 +176,13 @@ function CustomersPane({ data }: { data: Dash }) {
       <VisitTable rows={data.recentVisits} />
       <Link to="/owner/visitors" className="mt-4 inline-block text-sm text-bronze">
         Full customer book →
+      </Link>
+      <Link to="/owner/leads" className={cn(toolCard, "mt-4 block")}>
+        <Bot className="size-5 text-bronze" />
+        <h3 className="mt-3 font-display text-2xl">Sales agent</h3>
+        <p className="mt-1 text-sm text-parchment/55">
+          Collect website leads, reach on WhatsApp, set a reminder. Does not scrape social apps.
+        </p>
       </Link>
     </div>
   );
@@ -539,6 +547,14 @@ function PeoplePane({ data }: { data: Dash }) {
         <h3 className="mt-3 font-display text-2xl">Online customers</h3>
         <p className="mt-1 text-sm text-parchment/55">Requirement, place, time, contact, mail.</p>
         <p className="mt-4 font-display text-3xl tabular-nums">{data.visits}</p>
+      </Link>
+      <Link
+        to="/owner/leads"
+        className="rounded-2xl border border-white/8 bg-white/4 p-5 transition-colors hover:border-bronze/40"
+      >
+        <Bot className="size-5 text-bronze" />
+        <h3 className="mt-3 font-display text-2xl">Sales agent</h3>
+        <p className="mt-1 text-sm text-parchment/55">Reach visitors. Remind. Share the website.</p>
       </Link>
       <Link
         to="/owner/enquiries"

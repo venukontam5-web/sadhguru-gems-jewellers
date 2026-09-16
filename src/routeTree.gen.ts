@@ -44,6 +44,7 @@ import { Route as OwnerCategoriesRouteImport } from './routes/owner/categories'
 import { Route as OwnerDiscountsRouteImport } from './routes/owner/discounts'
 import { Route as OwnerEnquiriesRouteImport } from './routes/owner/enquiries'
 import { Route as OwnerGstRouteImport } from './routes/owner/gst'
+import { Route as OwnerLeadsRouteImport } from './routes/owner/leads'
 import { Route as OwnerLiveRouteImport } from './routes/owner/live'
 import { Route as OwnerOrdersRouteImport } from './routes/owner/orders'
 import { Route as OwnerPaymentsRouteImport } from './routes/owner/payments'
@@ -253,6 +254,11 @@ const OwnerGstRoute = OwnerGstRouteImport.update({
   path: '/gst',
   getParentRoute: () => OwnerRoute,
 } as any)
+const OwnerLeadsRoute = OwnerLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => OwnerRoute,
+} as any)
 const OwnerLiveRoute = OwnerLiveRouteImport.update({
   id: '/live',
   path: '/live',
@@ -453,6 +459,7 @@ export interface FileRoutesByFullPath {
   '/owner/discounts': typeof OwnerDiscountsRoute
   '/owner/enquiries': typeof OwnerEnquiriesRoute
   '/owner/gst': typeof OwnerGstRoute
+  '/owner/leads': typeof OwnerLeadsRoute
   '/owner/live': typeof OwnerLiveRoute
   '/owner/orders': typeof OwnerOrdersRoute
   '/owner/payments': typeof OwnerPaymentsRoute
@@ -522,6 +529,7 @@ export interface FileRoutesByTo {
   '/owner/discounts': typeof OwnerDiscountsRoute
   '/owner/enquiries': typeof OwnerEnquiriesRoute
   '/owner/gst': typeof OwnerGstRoute
+  '/owner/leads': typeof OwnerLeadsRoute
   '/owner/live': typeof OwnerLiveRoute
   '/owner/orders': typeof OwnerOrdersRoute
   '/owner/payments': typeof OwnerPaymentsRoute
@@ -593,6 +601,7 @@ export interface FileRoutesById {
   '/owner/discounts': typeof OwnerDiscountsRoute
   '/owner/enquiries': typeof OwnerEnquiriesRoute
   '/owner/gst': typeof OwnerGstRoute
+  '/owner/leads': typeof OwnerLeadsRoute
   '/owner/live': typeof OwnerLiveRoute
   '/owner/orders': typeof OwnerOrdersRoute
   '/owner/payments': typeof OwnerPaymentsRoute
@@ -665,6 +674,7 @@ export interface FileRouteTypes {
     | '/owner/discounts'
     | '/owner/enquiries'
     | '/owner/gst'
+    | '/owner/leads'
     | '/owner/live'
     | '/owner/orders'
     | '/owner/payments'
@@ -734,6 +744,7 @@ export interface FileRouteTypes {
     | '/owner/discounts'
     | '/owner/enquiries'
     | '/owner/gst'
+    | '/owner/leads'
     | '/owner/live'
     | '/owner/orders'
     | '/owner/payments'
@@ -804,6 +815,7 @@ export interface FileRouteTypes {
     | '/owner/discounts'
     | '/owner/enquiries'
     | '/owner/gst'
+    | '/owner/leads'
     | '/owner/live'
     | '/owner/orders'
     | '/owner/payments'
@@ -1121,6 +1133,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OwnerGstRouteImport
       parentRoute: typeof OwnerRoute
     }
+    '/owner/leads': {
+      id: '/owner/leads'
+      path: '/leads'
+      fullPath: '/owner/leads'
+      preLoaderRoute: typeof OwnerLeadsRouteImport
+      parentRoute: typeof OwnerRoute
+    }
     '/owner/live': {
       id: '/owner/live'
       path: '/live'
@@ -1364,6 +1383,7 @@ interface OwnerRouteChildren {
   OwnerDiscountsRoute: typeof OwnerDiscountsRoute
   OwnerEnquiriesRoute: typeof OwnerEnquiriesRoute
   OwnerGstRoute: typeof OwnerGstRoute
+  OwnerLeadsRoute: typeof OwnerLeadsRoute
   OwnerLiveRoute: typeof OwnerLiveRoute
   OwnerOrdersRoute: typeof OwnerOrdersRoute
   OwnerPaymentsRoute: typeof OwnerPaymentsRoute
@@ -1405,6 +1425,7 @@ const OwnerRouteChildren: OwnerRouteChildren = {
   OwnerDiscountsRoute: OwnerDiscountsRoute,
   OwnerEnquiriesRoute: OwnerEnquiriesRoute,
   OwnerGstRoute: OwnerGstRoute,
+  OwnerLeadsRoute: OwnerLeadsRoute,
   OwnerLiveRoute: OwnerLiveRoute,
   OwnerOrdersRoute: OwnerOrdersRoute,
   OwnerPaymentsRoute: OwnerPaymentsRoute,
