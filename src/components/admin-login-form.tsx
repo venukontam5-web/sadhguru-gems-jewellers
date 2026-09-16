@@ -94,7 +94,9 @@ function FormBody() {
         if (res.error) {
           const m = (res.error.message || "").toLowerCase();
           if (m.includes("origin")) {
-            setError("Refresh this page once, then try again.");
+            setError(
+              "This live door is still an old build. In Vercel open sgj-live → Deployments → Redeploy. Then try again.",
+            );
           } else if (m.includes("invalid") || m.includes("not found") || m.includes("credential")) {
             setError("No house account on this live shop yet. Tap Create a house account with the house Gmail.");
           } else {
