@@ -3,7 +3,7 @@ import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { AnalyticsScripts, GtmNoscript } from "@/lib/analytics";
 import { MARKETING, SITE } from "@/data/site";
-import { localBusinessJsonLd } from "@/lib/seo";
+import { localBusinessJsonLd, websiteJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
 import { AppErrorComponent } from "@/lib/error-component";
 import { ThemeApplier } from "@/components/theme-applier";
@@ -92,6 +92,7 @@ function RootDocument() {
         <PreviewHostBridge />
         <ThemeApplier theme={theme} />
         <JsonLd data={localBusinessJsonLd()} />
+        <JsonLd data={websiteJsonLd()} />
         <AuthProvider>
           <CartProvider>
             <Outlet />

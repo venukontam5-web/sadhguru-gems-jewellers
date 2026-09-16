@@ -17,8 +17,8 @@ export const Route = createFileRoute("/")({
   component: Home,
   head: () => {
     const base = pageHead(
-      "Certified Gemstones in Solapur",
-      "Sadhguru Gems & Jewellers — Navratna gemstones, gold and silver jewellery, brass and copper ware. Akkalkot Road, Solapur.",
+      "Official Certified Gemstones Shop in Solapur",
+      "Official website of Sadhguru Gems & Jewellers, Solapur. Buy certified Navratna gemstones, ruby, yellow sapphire, emerald, pearl, gold and silver jewellery on Akkalkot Road, Kumbhari.",
       "/",
     );
     return {

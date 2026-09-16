@@ -4,7 +4,8 @@ import { EnquireForm } from "@/components/enquire-form";
 import { GEMSTONES, getGemstone } from "@/data/gemstones";
 import { getNavratnaLore } from "@/data/navratna";
 import { whatsappHref } from "@/data/site";
-import { pageHead } from "@/lib/seo";
+import { pageHead, gemstoneJsonLd, breadcrumbJsonLd } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ProductPhoto, MediaImg } from "@/components/product-photo";
@@ -19,8 +20,8 @@ export const Route = createFileRoute("/gemstones/$slug")({
   head: ({ loaderData }) =>
     loaderData
       ? pageHead(
-          `${loaderData.name} (${loaderData.sanskrit})`,
-          `${loaderData.name} — ${loaderData.sanskrit}, stone of ${loaderData.planet}. ${loaderData.excerpt}`,
+          `${loaderData.name} (${loaderData.sanskrit}) certified gemstone in Solapur`,
+          `Buy certified ${loaderData.name} (${loaderData.sanskrit}), stone of ${loaderData.planet}, at Sadhguru Gems & Jewellers — official gemstone shop, Akkalkot Road, Solapur. ${loaderData.excerpt}`,
           `/gemstones/${loaderData.slug}`,
         )
       : pageHead("Gemstone", "Certified gemstone at Sadhguru Gems & Jewellers.", "/gemstones"),
@@ -33,6 +34,14 @@ function GemstonePage() {
 
   return (
     <SiteShell>
+      <JsonLd data={gemstoneJsonLd(gem)} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Gemstones", path: "/gemstones" },
+          { name: gem.name, path: `/gemstones/${gem.slug}` },
+        ])}
+      />
       <article className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2">
         <div>
           <ProductPhoto

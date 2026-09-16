@@ -5,7 +5,8 @@ import { PageHero } from "@/components/page-hero";
 import { GemCard } from "@/components/product-card";
 import { RashiGuide } from "@/components/rashi-guide";
 import { GEMSTONES, type GemGroup } from "@/data/gemstones";
-import { pageHead } from "@/lib/seo";
+import { pageHead, faqJsonLd, breadcrumbJsonLd } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { cn } from "@/lib/utils";
 
 type Filter = "all" | GemGroup;
@@ -14,21 +15,22 @@ export const Route = createFileRoute("/gemstones/")({
   component: GemstonesPage,
   head: () =>
     pageHead(
-      "Gemstones",
-      "Navratna and cabinet gemstones at Sadhguru Gems & Jewellers, Solapur — ruby, pearl, coral, emerald, yellow sapphire, diamond, blue sapphire, hessonite and cat’s eye.",
+      "Certified Gemstones in Solapur — Navratna, Ruby, Pukhraj",
+      "Official gemstone cabinet of Sadhguru Gems & Jewellers, Solapur. Certified Navratna: ruby, pearl, coral, emerald, yellow sapphire, diamond, blue sapphire, hessonite and cat’s eye.",
       "/gemstones",
     ),
-  validateSearch: (search: Record<string, unknown>): { group?: Filter } => ({
+  validateSearch: (search: Record<string, unknown>): { group?: Filter; q?: string } => ({
     group: search.group === "navratna" || search.group === "semi" || search.group === "precious" || search.group === "all"
       ? (search.group as Filter)
       : undefined,
+    q: typeof search.q === "string" ? search.q : undefined,
   }),
 });
 
 function GemstonesPage() {
-  const { group } = Route.useSearch();
+  const { group, q: qSearch } = Route.useSearch();
   const [filter, setFilter] = useState<Filter>(group ?? "all");
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(qSearch ?? "");
 
   const list = useMemo(() => {
     return GEMSTONES.filter((g) => {
@@ -41,6 +43,28 @@ function GemstonesPage() {
 
   return (
     <SiteShell>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Certified gemstones", path: "/gemstones" },
+        ])}
+      />
+      <JsonLd
+        data={faqJsonLd([
+          {
+            q: "Where can I buy certified gemstones in Solapur?",
+            a: "Sadhguru Gems & Jewellers is the official certified gemstone house on Akkalkot Road, Kumbhari, Solapur 413006. Visit sadhgurugemsandjewellers.com or the shop near Aadam Kirana, MIDC.",
+          },
+          {
+            q: "What is the official website of Sadhguru Gems and Jewellers?",
+            a: "The official website is https://sadhgurugemsandjewellers.com — Navratna gemstones, gold, silver, brass and copper from Solapur.",
+          },
+          {
+            q: "Do you sell Navratna stones like ruby and yellow sapphire?",
+            a: "Yes. The cabinet holds the nine Navratna: ruby (Manikya), pearl, red coral, emerald, yellow sapphire (Pukhraj), diamond, blue sapphire, hessonite and cat’s eye, with treatments disclosed.",
+          },
+        ])}
+      />
       <PageHero
         kicker="Collection"
         title="Gemstones, named and described."

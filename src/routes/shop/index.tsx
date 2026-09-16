@@ -17,8 +17,8 @@ export const Route = createFileRoute("/shop/")({
   loader: ({ deps }) => listActiveProducts({ data: { category: deps.category } }),
   head: () =>
     pageHead(
-      "Shop",
-      "Gemstones, crystals, malas, pearls and brass from Sadhguru Gems & Jewellers, Solapur. Enquire to reserve.",
+      "Shop certified gemstones and jewellery in Solapur",
+      "Official shop of Sadhguru Gems & Jewellers, Solapur. Enquire to reserve certified gemstones, malas, pearls and brass. Akkalkot Road, Kumbhari.",
       "/shop",
     ),
 });
