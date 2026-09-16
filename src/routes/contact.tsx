@@ -4,6 +4,7 @@ import { SiteShell } from "@/components/layout/header";
 import { PageHero } from "@/components/page-hero";
 import { EnquireForm } from "@/components/enquire-form";
 import { SITE, fullAddress, whatsappHref } from "@/data/site";
+import { GBP } from "@/data/gbp";
 import { pageHead, localBusinessJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
 import { MediaImg } from "@/components/product-photo";
@@ -30,8 +31,8 @@ function ContactPage() {
       />
       <PageHero
         kicker="Contact"
-        title="The door on Akkalkot Road."
-        lede="Walk in, write, or call. Stones are easier to choose in the hand than on a screen — but an enquiry first is welcome."
+        title="The official shop on Akkalkot Road."
+        lede={GBP.fromTheBusiness}
       />
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2">
         <div>
@@ -83,6 +84,21 @@ function ContactPage() {
                 </p>
               </div>
             </li>
+          </ul>
+          <p className="mt-8 text-xs tracking-[0.16em] text-stone uppercase">Google Business</p>
+          <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+            Search Google Maps for <strong className="text-ink">{GBP.name}</strong>. The official website on that pin must be{" "}
+            <a href={SITE.url} className="text-garnet hover:text-garnet-deep">
+              {SITE.domain}
+            </a>
+            — not sgj.world.
+          </p>
+          <ul className="mt-4 flex flex-wrap gap-2">
+            {GBP.services.slice(0, 8).map((s) => (
+              <li key={s} className="rounded-full bg-ivory px-3 py-1.5 text-xs text-ink shadow-card">
+                {s}
+              </li>
+            ))}
           </ul>
           <a
             href={SITE.mapsLink}
