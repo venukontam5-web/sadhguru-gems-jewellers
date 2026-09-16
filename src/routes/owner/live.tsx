@@ -4,6 +4,7 @@ import { getLiveSettings, publishLive, saveLiveSettings } from "@/server/live";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { GbpKit } from "@/components/gbp-kit";
+import { SITE } from "@/data/site";
 
 export const Route = createFileRoute("/owner/live")({
   component: OwnerLive,
@@ -86,6 +87,19 @@ function OwnerLive() {
       <h1 className="font-display text-4xl font-semibold">Live website</h1>
       <p className="mt-2 text-sm leading-relaxed text-parchment/60">
         GitHub holds the book. Vercel hangs the name. They are tagged together on this desk.
+      </p>
+
+      <a
+        href={`https://vercel.com/new/import?s=${SITE.githubUrl}`}
+        target="_blank"
+        rel="noreferrer"
+        className="mt-6 flex min-h-12 items-center justify-center rounded-full bg-garnet px-5 text-sm font-medium text-parchment"
+      >
+        Connect GitHub → Vercel (one tap)
+      </a>
+      <p className="mt-2 text-xs text-parchment/50">
+        Keep team <strong>venukontam5-3188's projects</strong>. Choose repo{" "}
+        <strong>www.sadhgurugemsandjewellers.com</strong>. Allow Vercel when GitHub asks.
       </p>
 
       <dl className="mt-6 grid gap-3 rounded-2xl border border-ink/10 bg-white p-5 text-sm">
