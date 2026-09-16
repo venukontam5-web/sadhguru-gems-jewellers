@@ -97,7 +97,7 @@ async function seedFromSettings() {
     const ok = looksValid(slot, value);
     await sql`
       insert into api_keys (slot, label, secret, fingerprint, kind, verified, verified_at, note, updated_at)
-      values (${slot}, ${label}, ${value}, ${fingerprint(value)}, 'paste', ${ok}, ${ok ? new Date() : null}, ${ok ? "Matched shop settings" : ""}, now())
+      values (${slot}, ${label}, ${value}, ${fingerprint(value)}, 'paste', ${ok}, now(), ${ok ? "Matched shop settings" : ""}, now())
       on conflict (slot) do nothing`;
   }
 }
@@ -252,14 +252,14 @@ export const saveApiKey = createServerFn({ method: "POST" })
       values (
         ${slot}, ${label}, ${secret}, ${fingerprint(secret)},
         ${meta?.kind === "generate" ? "generate" : slot.startsWith("custom:") ? "custom" : "paste"},
-        ${check.ok}, ${check.ok ? new Date() : null}, ${check.note}, now()
+        ${check.ok}, now(), ${check.note}, now()
       )
       on conflict (slot) do update set
         label = excluded.label,
         secret = excluded.secret,
         fingerprint = excluded.fingerprint,
         verified = excluded.verified,
-        verified_at = excluded.verified_at,
+        verified_at = now(),
         note = excluded.note,
         updated_at = now()`;
     await writeThrough(slot, secret);
@@ -306,7 +306,7 @@ export const verifyApiKey = createServerFn({ method: "POST" })
     const check = await probe(data.slot, row.secret);
     await sql`
       update api_keys
-      set verified = ${check.ok}, verified_at = ${check.ok ? new Date() : null}, note = ${check.note}, updated_at = now()
+      set verified = ${check.ok}, verified_at = now(), note = ${check.note}, updated_at = now()
       where slot = ${data.slot}`;
     return { slot: data.slot, verified: check.ok, note: check.note };
   });

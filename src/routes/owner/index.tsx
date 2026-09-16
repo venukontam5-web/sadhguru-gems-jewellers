@@ -25,6 +25,7 @@ import {
   Share2,
   Users,
   PackagePlus,
+  KeyRound,
 } from "lucide-react";
 import { money, type BillSummary } from "@/lib/bills";
 import { money as invMoney, type InventorySummary } from "@/lib/inventory";
@@ -106,6 +107,13 @@ function OwnerHome() {
           <button type="button" onClick={load} className={cn(buttonVariants({ variant: "ivory", size: "sm" }))}>
             Refresh
           </button>
+          <Link
+            to="/owner/keys"
+            className={cn(buttonVariants({ size: "sm" }), "border border-white/15 bg-white/5 text-parchment hover:bg-white/10", !can("appearance") && "hidden")}
+          >
+            <KeyRound className="size-4" />
+            API keys
+          </Link>
           <Link
             to="/owner/live"
             className={cn(buttonVariants({ size: "sm" }), "border border-white/15 bg-white/5 text-parchment hover:bg-white/10", !can("appearance") && "hidden")}
@@ -474,7 +482,7 @@ function CabinetPane({ inv }: { inv: InventorySummary | null }) {
 function ShopPane({ data }: { data: Dash }) {
   return (
     <div className="mt-6 space-y-6">
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Link
           to="/owner/slides"
           className="rounded-2xl border border-white/8 bg-white/4 p-5 transition-colors hover:border-bronze/40"
@@ -501,6 +509,15 @@ function ShopPane({ data }: { data: Dash }) {
           <h3 className="mt-3 font-display text-2xl">Website style</h3>
           <p className="mt-1 text-sm text-parchment/55">Fonts, colours, and themes. Save to publish.</p>
           <p className="mt-4 text-xs text-bronze">Heritage is the house look</p>
+        </Link>
+        <Link
+          to="/owner/keys"
+          className="rounded-2xl border border-white/8 bg-white/4 p-5 transition-colors hover:border-bronze/40"
+        >
+          <KeyRound className="size-5 text-bronze" />
+          <h3 className="mt-3 font-display text-2xl">API keys</h3>
+          <p className="mt-1 text-sm text-parchment/55">Paste or mint. Verify. One service at a time.</p>
+          <p className="mt-4 text-xs text-bronze">Razorpay · Google · Vercel · house secrets</p>
         </Link>
       </div>
       <div className="flex gap-3 overflow-x-auto pb-2">
