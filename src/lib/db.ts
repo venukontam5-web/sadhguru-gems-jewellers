@@ -1,4 +1,8 @@
 import { pendingMigrations } from "../../scripts/migration-plan.mjs";
+import { existsSync } from "node:fs";
+import { readFile } from "node:fs/promises";
+import { createRequire } from "node:module";
+import { dirname, join } from "node:path";
 
 /** Which database backend is active. */
 export type DbSource = "neon" | "pglite";
@@ -143,6 +147,32 @@ async function connectNeon(): Promise<Sql> {
   return toSql(run);
 }
 
+async function pgliteRuntimeModules() {
+  const dirs: string[] = [
+    join("/var/task", "_libs"),
+    join(process.cwd(), "_libs"),
+    join(process.cwd(), "node_modules/@electric-sql/pglite/dist"),
+  ];
+  try {
+    const req = createRequire(import.meta.url);
+    dirs.unshift(join(dirname(req.resolve("@electric-sql/pglite/package.json")), "dist"));
+  } catch {
+    /* bundled — use _libs */
+  }
+  const dist = dirs.find((d) => existsSync(join(d, "pglite.data")));
+  if (!dist) return {};
+  const [wasm, initdb, data] = await Promise.all([
+    readFile(join(dist, "pglite.wasm")),
+    readFile(join(dist, "initdb.wasm")),
+    readFile(join(dist, "pglite.data")),
+  ]);
+  return {
+    pgliteWasmModule: await WebAssembly.compile(wasm),
+    initdbWasmModule: await WebAssembly.compile(initdb),
+    fsBundle: new Blob([new Uint8Array(data)]),
+  };
+}
+
 async function connectPglite(): Promise<Sql> {
   const pg = await openPglite();
   const run: Run = async (text, params) => {
@@ -157,6 +187,8 @@ async function openPglite(): Promise<import("@electric-sql/pglite").PGlite> {
     globalRef.__pgliteInstance__ = (async () => {
       const { PGlite } = await import("@electric-sql/pglite");
       const pg = new PGlite({
+        dataDir: "memory://",
+        ...(await pgliteRuntimeModules()),
         parsers: {
           [OID_INT8]: Number,
           [OID_DATE]: identity,

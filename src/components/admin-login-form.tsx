@@ -11,6 +11,20 @@ import { markDeskUnlocked } from "@/lib/touch-id";
 import { resolveStaffDoor } from "@/server/staff";
 import { useIsStaff } from "@/lib/use-staff";
 
+function friendlyAuthError(raw: string | undefined, mode: "in" | "up") {
+  const m = (raw || "").toLowerCase();
+  if (m.includes("enoent") || m.includes("pglite") || m.includes("/var/task")) {
+    return "The live book is still packing its files. Redeploy sgj-live from GitHub, then try Create house account again.";
+  }
+  if (m.includes("origin")) {
+    return "This live door is still an old build. Redeploy sgj-live, then try again.";
+  }
+  if (mode === "in" && (m.includes("invalid") || m.includes("not found") || m.includes("credential"))) {
+    return "No house account on this live shop yet. Tap Create a house account with the house Gmail.";
+  }
+  return raw || (mode === "up" ? "Could not create the house account." : "Email or password is not right.");
+}
+
 export function AdminLoginForm() {
   const { user } = useCurrentUserState();
   const { staff, isPending } = useIsStaff();
@@ -86,22 +100,13 @@ function FormBody() {
           name: name.trim() || "Owner",
         });
         if (res.error) {
-          setError(res.error.message || "Could not create the house account.");
+          setError(friendlyAuthError(res.error.message, "up"));
           return;
         }
       } else {
         const res = await authClient.signIn.email({ email: houseEmail, password });
         if (res.error) {
-          const m = (res.error.message || "").toLowerCase();
-          if (m.includes("origin")) {
-            setError(
-              "This live door is still an old build. In Vercel open sgj-live → Deployments → Redeploy. Then try again.",
-            );
-          } else if (m.includes("invalid") || m.includes("not found") || m.includes("credential")) {
-            setError("No house account on this live shop yet. Tap Create a house account with the house Gmail.");
-          } else {
-            setError(res.error.message || "Email or password is not right.");
-          }
+          setError(friendlyAuthError(res.error.message, "in"));
           return;
         }
       }

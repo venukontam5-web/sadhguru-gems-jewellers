@@ -1,4 +1,4 @@
-import { readdirSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import type { Plugin } from "vite";
 import { defineConfig } from "vite";
@@ -30,6 +30,38 @@ function hasGlobbedMigrations(root: string): boolean {
  * migrations — no schema to apply — skips it entirely rather than paying for a
  * PGLite instance it never queries.
  */
+function copyPgliteAssets() {
+  const srcDir = join(process.cwd(), "node_modules/@electric-sql/pglite/dist");
+  const dests = [
+    join(process.cwd(), ".vercel/output/functions/__server.func/_libs"),
+    join(process.cwd(), ".output/server/_libs"),
+  ];
+  const files = ["pglite.data", "pglite.wasm", "initdb.wasm"] as const;
+  for (const dest of dests) {
+    const parent = join(dest, "..");
+    if (!existsSync(parent) && !existsSync(dest)) continue;
+    mkdirSync(dest, { recursive: true });
+    for (const name of files) {
+      const from = join(srcDir, name);
+      if (existsSync(from)) copyFileSync(from, join(dest, name));
+    }
+  }
+}
+
+function pgliteAssetsPlugin(): Plugin {
+  return {
+    name: "copy-pglite-assets",
+    apply: "build",
+    closeBundle: {
+      order: "post",
+      sequential: true,
+      handler() {
+        copyPgliteAssets();
+      },
+    },
+  };
+}
+
 function pgliteBootstrapPlugin(): Plugin {
   return {
     name: "app-builder:pglite-bootstrap",
@@ -159,6 +191,7 @@ export default defineConfig(({ command, isPreview }) => ({
   resolve: { tsconfigPaths: true },
   plugins: [
     pgliteBootstrapPlugin(),
+    pgliteAssetsPlugin(),
     // Before tanstackStart so /auth/popup never falls through to the SPA.
     authPopupPlugin(),
     // Dev-only /__app-env, read by scripts/check-auth-invariant.mjs.
@@ -175,6 +208,11 @@ export default defineConfig(({ command, isPreview }) => ({
             // manifest + head-tag middleware). Nitro v3 defaults serverDir to
             // false, so removing this silently unwires /?install=1 on deploys.
             serverDir: "./server",
+            hooks: {
+              compiled() {
+                copyPgliteAssets();
+              },
+            },
           }),
         ]
       : []),
