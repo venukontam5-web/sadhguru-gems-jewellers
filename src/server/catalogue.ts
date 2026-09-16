@@ -23,6 +23,8 @@ type ProductRow = {
   reorder_at?: number;
   cost_inr?: number;
   location?: string;
+  vendor_id?: number | null;
+  vendor_name?: string;
 };
 
 type SlideRow = {
@@ -81,6 +83,8 @@ function mapProduct(r: ProductRow): ShopProduct {
     reorderAt: Number(r.reorder_at ?? 2),
     costInr: Number(r.cost_inr ?? 0),
     location: r.location ?? "Cabinet",
+    vendorId: r.vendor_id == null ? null : Number(r.vendor_id),
+    vendorName: r.vendor_name ?? "",
   };
 }
 
@@ -304,7 +308,11 @@ export const ownerListProducts = createServerFn({ method: "GET" })
   .middleware([capMiddleware("products")])
   .handler(async () => {
     const sql = await getSql();
-    const rows = await sql<ProductRow>`select * from products order by id desc`;
+    const rows = await sql<ProductRow>`
+      select p.*, v.name as vendor_name
+      from products p
+      left join shop_vendors v on v.id = p.vendor_id
+      order by p.id desc`;
     return rows.map(mapProduct);
   });
 
@@ -350,6 +358,7 @@ const productInput = z.object({
   badge: z.string().max(40),
   active: z.boolean(),
   description: z.string().max(2000),
+  vendorId: z.number().int().positive().nullable().optional(),
 });
 
 export const ownerSaveProduct = createServerFn({ method: "POST" })
@@ -360,6 +369,7 @@ export const ownerSaveProduct = createServerFn({ method: "POST" })
     const slug = await uniqueProductSlug(sql, data.slug || data.name, data.id);
     const unit = data.category === "Gemstones" ? "ct" : "pc";
     const location = trayFor(data.category);
+    const vendorId = data.vendorId ?? null;
     if (data.id) {
       const prev = await sql<{ stock: number }>`select stock from products where id = ${data.id} limit 1`;
       if (!prev[0]) throw new Error("That piece is no longer in the book.");
@@ -377,6 +387,7 @@ export const ownerSaveProduct = createServerFn({ method: "POST" })
           description = ${data.description},
           unit = ${unit},
           location = ${location},
+          vendor_id = ${vendorId},
           updated_by = ${context.userId}
         where id = ${data.id}`;
       const before = Number(prev[0]?.stock ?? data.stock);
@@ -395,12 +406,12 @@ export const ownerSaveProduct = createServerFn({ method: "POST" })
     const inserted = await sql<{ id: number }>`
       insert into products (
         slug, name, category, price_inr, compare_at, stock, image_path,
-        badge, active, description, updated_by, unit, location
+        badge, active, description, updated_by, unit, location, vendor_id
       )
       values (
         ${slug}, ${data.name.trim()}, ${data.category}, ${data.priceInr}, ${data.compareAt},
         ${data.stock}, ${data.imagePath}, ${data.badge}, ${data.active}, ${data.description},
-        ${context.userId}, ${unit}, ${location}
+        ${context.userId}, ${unit}, ${location}, ${vendorId}
       )
       returning id`;
     const id = Number(inserted[0]?.id ?? 0);

@@ -27,6 +27,8 @@ export type ShopProduct = {
   reorderAt?: number;
   costInr?: number;
   location?: string;
+  vendorId?: number | null;
+  vendorName?: string;
 };
 
 export type ShopSlide = {

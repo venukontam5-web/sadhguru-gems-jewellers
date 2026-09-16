@@ -417,7 +417,7 @@ function CabinetPane({ inv }: { inv: InventorySummary | null }) {
           All tools
         </Link>
       </div>
-      <div className="mt-4 grid gap-3 md:grid-cols-2">
+      <div className="mt-4 grid gap-3 md:grid-cols-3">
         <Link
           to="/owner/inventory/stock"
           className="rounded-2xl border border-white/8 bg-white/4 p-5 transition-colors hover:border-bronze/40"
@@ -427,6 +427,15 @@ function CabinetPane({ inv }: { inv: InventorySummary | null }) {
           <p className="mt-1 text-sm text-parchment/55">Gemstones, mala, brass, copper — one tray each.</p>
           <p className="mt-4 text-sm">{inv ? `${inv.skus} SKUs · ${inv.pieces} pieces` : "—"}</p>
           <p className="mt-1 text-xs text-bronze">{inv ? `${invMoney(inv.retailValue)} on the shelf` : "Open the book"}</p>
+        </Link>
+        <Link
+          to="/owner/catalog"
+          className="rounded-2xl border border-white/8 bg-white/4 p-5 transition-colors hover:border-bronze/40"
+        >
+          <PackagePlus className="size-5 text-bronze" />
+          <h3 className="mt-3 font-display text-2xl">Album catalog</h3>
+          <p className="mt-1 text-sm text-parchment/55">Vendor list with photographs, details, category-wise.</p>
+          <p className="mt-4 text-xs text-bronze">Upload pieces onto ivory</p>
         </Link>
         <Link
           to="/owner/bills/stock"
@@ -457,7 +466,7 @@ function CabinetPane({ inv }: { inv: InventorySummary | null }) {
 function ShopPane({ data }: { data: Dash }) {
   return (
     <div className="mt-6 space-y-6">
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-3">
         <Link
           to="/owner/slides"
           className="rounded-2xl border border-white/8 bg-white/4 p-5 transition-colors hover:border-bronze/40"
@@ -466,6 +475,15 @@ function ShopPane({ data }: { data: Dash }) {
           <h3 className="mt-3 font-display text-2xl">Homepage slides</h3>
           <p className="mt-1 text-sm text-parchment/55">Ad posters and product videos.</p>
           <p className="mt-4 text-xs text-bronze">{data.slides} live on the shop</p>
+        </Link>
+        <Link
+          to="/owner/catalog"
+          className="rounded-2xl border border-white/8 bg-white/4 p-5 transition-colors hover:border-bronze/40"
+        >
+          <Images className="size-5 text-bronze" />
+          <h3 className="mt-3 font-display text-2xl">Album catalog</h3>
+          <p className="mt-1 text-sm text-parchment/55">Vendor product list — image, details, by category.</p>
+          <p className="mt-4 text-xs text-bronze">{data.products} pieces in the book</p>
         </Link>
         <Link
           to="/owner/appearance"

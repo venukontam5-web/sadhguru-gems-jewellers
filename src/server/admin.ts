@@ -107,23 +107,29 @@ export const saveCategory = createServerFn({ method: "POST" })
 
 export const listVendors = createServerFn({ method: "GET" })
   .middleware([capMiddleware("inventory")])
-  .handler(async () => {
-    const sql = await getSql();
-    const rows = await sql<{
-      id: number;
-      name: string;
-      phone: string;
-      city: string;
-      notes: string;
-    }>`select id, name, phone, city, notes from shop_vendors order by id desc`;
-    return rows.map((r) => ({
-      id: Number(r.id),
-      name: r.name,
-      phone: r.phone,
-      city: r.city,
-      notes: r.notes,
-    }));
-  });
+  .handler(listVendorRows);
+
+export const listCatalogVendors = createServerFn({ method: "GET" })
+  .middleware([capMiddleware("products")])
+  .handler(listVendorRows);
+
+async function listVendorRows() {
+  const sql = await getSql();
+  const rows = await sql<{
+    id: number;
+    name: string;
+    phone: string;
+    city: string;
+    notes: string;
+  }>`select id, name, phone, city, notes from shop_vendors order by id desc`;
+  return rows.map((r) => ({
+    id: Number(r.id),
+    name: r.name,
+    phone: r.phone,
+    city: r.city,
+    notes: r.notes,
+  }));
+}
 
 export const saveVendor = createServerFn({ method: "POST" })
   .middleware([capMiddleware("inventory")])

@@ -39,6 +39,7 @@ import { Route as OwnerIndexRouteImport } from './routes/owner/index'
 import { Route as OwnerAdsRouteImport } from './routes/owner/ads'
 import { Route as OwnerAppearanceRouteImport } from './routes/owner/appearance'
 import { Route as OwnerAstrologyRouteImport } from './routes/owner/astrology'
+import { Route as OwnerCatalogRouteImport } from './routes/owner/catalog'
 import { Route as OwnerCategoriesRouteImport } from './routes/owner/categories'
 import { Route as OwnerDiscountsRouteImport } from './routes/owner/discounts'
 import { Route as OwnerEnquiriesRouteImport } from './routes/owner/enquiries'
@@ -225,6 +226,11 @@ const OwnerAppearanceRoute = OwnerAppearanceRouteImport.update({
 const OwnerAstrologyRoute = OwnerAstrologyRouteImport.update({
   id: '/astrology',
   path: '/astrology',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerCatalogRoute = OwnerCatalogRouteImport.update({
+  id: '/catalog',
+  path: '/catalog',
   getParentRoute: () => OwnerRoute,
 } as any)
 const OwnerCategoriesRoute = OwnerCategoriesRouteImport.update({
@@ -442,6 +448,7 @@ export interface FileRoutesByFullPath {
   '/owner/ads': typeof OwnerAdsRoute
   '/owner/appearance': typeof OwnerAppearanceRoute
   '/owner/astrology': typeof OwnerAstrologyRoute
+  '/owner/catalog': typeof OwnerCatalogRoute
   '/owner/categories': typeof OwnerCategoriesRoute
   '/owner/discounts': typeof OwnerDiscountsRoute
   '/owner/enquiries': typeof OwnerEnquiriesRoute
@@ -510,6 +517,7 @@ export interface FileRoutesByTo {
   '/owner/ads': typeof OwnerAdsRoute
   '/owner/appearance': typeof OwnerAppearanceRoute
   '/owner/astrology': typeof OwnerAstrologyRoute
+  '/owner/catalog': typeof OwnerCatalogRoute
   '/owner/categories': typeof OwnerCategoriesRoute
   '/owner/discounts': typeof OwnerDiscountsRoute
   '/owner/enquiries': typeof OwnerEnquiriesRoute
@@ -580,6 +588,7 @@ export interface FileRoutesById {
   '/owner/ads': typeof OwnerAdsRoute
   '/owner/appearance': typeof OwnerAppearanceRoute
   '/owner/astrology': typeof OwnerAstrologyRoute
+  '/owner/catalog': typeof OwnerCatalogRoute
   '/owner/categories': typeof OwnerCategoriesRoute
   '/owner/discounts': typeof OwnerDiscountsRoute
   '/owner/enquiries': typeof OwnerEnquiriesRoute
@@ -651,6 +660,7 @@ export interface FileRouteTypes {
     | '/owner/ads'
     | '/owner/appearance'
     | '/owner/astrology'
+    | '/owner/catalog'
     | '/owner/categories'
     | '/owner/discounts'
     | '/owner/enquiries'
@@ -719,6 +729,7 @@ export interface FileRouteTypes {
     | '/owner/ads'
     | '/owner/appearance'
     | '/owner/astrology'
+    | '/owner/catalog'
     | '/owner/categories'
     | '/owner/discounts'
     | '/owner/enquiries'
@@ -788,6 +799,7 @@ export interface FileRouteTypes {
     | '/owner/ads'
     | '/owner/appearance'
     | '/owner/astrology'
+    | '/owner/catalog'
     | '/owner/categories'
     | '/owner/discounts'
     | '/owner/enquiries'
@@ -1074,6 +1086,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OwnerAstrologyRouteImport
       parentRoute: typeof OwnerRoute
     }
+    '/owner/catalog': {
+      id: '/owner/catalog'
+      path: '/catalog'
+      fullPath: '/owner/catalog'
+      preLoaderRoute: typeof OwnerCatalogRouteImport
+      parentRoute: typeof OwnerRoute
+    }
     '/owner/categories': {
       id: '/owner/categories'
       path: '/categories'
@@ -1340,6 +1359,7 @@ interface OwnerRouteChildren {
   OwnerAdsRoute: typeof OwnerAdsRoute
   OwnerAppearanceRoute: typeof OwnerAppearanceRoute
   OwnerAstrologyRoute: typeof OwnerAstrologyRoute
+  OwnerCatalogRoute: typeof OwnerCatalogRoute
   OwnerCategoriesRoute: typeof OwnerCategoriesRoute
   OwnerDiscountsRoute: typeof OwnerDiscountsRoute
   OwnerEnquiriesRoute: typeof OwnerEnquiriesRoute
@@ -1380,6 +1400,7 @@ const OwnerRouteChildren: OwnerRouteChildren = {
   OwnerAdsRoute: OwnerAdsRoute,
   OwnerAppearanceRoute: OwnerAppearanceRoute,
   OwnerAstrologyRoute: OwnerAstrologyRoute,
+  OwnerCatalogRoute: OwnerCatalogRoute,
   OwnerCategoriesRoute: OwnerCategoriesRoute,
   OwnerDiscountsRoute: OwnerDiscountsRoute,
   OwnerEnquiriesRoute: OwnerEnquiriesRoute,
