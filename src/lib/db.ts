@@ -48,6 +48,7 @@ const globalRef = globalThis as typeof globalThis & {
   __pgSqlPromise__?: Promise<Sql>;
   __pgliteInstance__?: Promise<import("@electric-sql/pglite").PGlite>;
   __pgliteMigrateChain__?: Promise<void>;
+  __pgliteGlobFp__?: string;
   __productAlbumReady__?: boolean;
 };
 
@@ -67,6 +68,14 @@ const OID_INT8 = 20;
 const OID_DATE = 1082;
 const OID_INTERVAL = 1186;
 const identity = (v: string) => v;
+
+/** Inlined at compile time so Vite reloads this module when a migrations/*.sql file is added. */
+const MIGRATION_FILES = import.meta.glob("/migrations/*.sql", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+}) as Record<string, string>;
+const MIGRATION_FP = Object.keys(MIGRATION_FILES).sort().join("|");
 
 type Run = <T>(text: string, params: unknown[]) => Promise<T[]>;
 
@@ -161,6 +170,7 @@ async function openPglite(): Promise<import("@electric-sql/pglite").PGlite> {
       return pg;
     })().catch((err) => {
       globalRef.__pgliteInstance__ = undefined;
+      globalRef.__pgliteGlobFp__ = undefined;
       throw err;
     });
   }
@@ -169,25 +179,21 @@ async function openPglite(): Promise<import("@electric-sql/pglite").PGlite> {
   // Apply migrations/ (the single schema source) so preview matches production.
   // SQL is inlined by the bundler via import.meta.glob (no runtime fs); applied
   // files are tracked in _migrations. The glob does not descend, so the opt-in
-  // auth schema under migrations/auth/ stays out. Runs once per module instance
-  // — so an HMR reload after adding a migration file applies it live — with
-  // passes serialized on a global chain so concurrent callers never
-  // double-apply.
+  // auth schema under migrations/auth/ stays out. Fingerprint skips a second
+  // pass until a new *.sql file reloads this module.
   const migrate = async (): Promise<void> => {
-    const migrations = import.meta.glob("/migrations/*.sql", {
-      query: "?raw",
-      import: "default",
-      eager: true,
-    }) as Record<string, string>;
+    if (globalRef.__pgliteGlobFp__ === MIGRATION_FP) return;
     const appliedRows = await pg.query<{ name: string }>("select name from _migrations");
     const applied = (appliedRows.rows ?? []).map((r) => r.name);
-    const pending = pendingMigrations(Object.keys(migrations), applied);
+    const pending = pendingMigrations(Object.keys(MIGRATION_FILES), applied);
     for (const { name, path } of pending) {
-      const text = migrations[path];
+      const text = MIGRATION_FILES[path];
       if (!text) continue;
       await pg.exec(text);
       await pg.query("insert into _migrations (name) values ($1)", [name]);
+      console.info(`[db] applied ${name}`);
     }
+    globalRef.__pgliteGlobFp__ = MIGRATION_FP;
   };
   globalRef.__pgliteMigrateChain__ = (globalRef.__pgliteMigrateChain__ ?? Promise.resolve())
     .then(migrate)
@@ -241,4 +247,4 @@ if (typeof window === "undefined" && dbSource === "pglite") {
   });
 }
 
-// HMR rememoize: owner gmail 0017
+// HMR rememoize: product gallery 0023
