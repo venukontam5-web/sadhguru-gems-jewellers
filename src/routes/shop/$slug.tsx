@@ -4,7 +4,8 @@ import { EnquireForm } from "@/components/enquire-form";
 import { inr } from "@/lib/shop";
 import { getProductBySlug } from "@/server/catalogue";
 import { whatsappHref } from "@/data/site";
-import { pageHead } from "@/lib/seo";
+import { pageHead, shopProductJsonLd, breadcrumbJsonLd } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ProductGallery } from "@/components/product-gallery";
@@ -20,8 +21,8 @@ export const Route = createFileRoute("/shop/$slug")({
   head: ({ loaderData }) =>
     loaderData
       ? pageHead(
-          loaderData.name,
-          `${loaderData.name} — ${inr(loaderData.priceInr)}. ${loaderData.description}`,
+          `${loaderData.name} | certified ${loaderData.category} Solapur`,
+          `${loaderData.name} — ${inr(loaderData.priceInr)}. ${loaderData.description} Official Sadhguru Gems & Jewellers, Akkalkot Road, Solapur.`,
           `/shop/${loaderData.slug}`,
         )
       : pageHead("Piece", "A piece from the Solapur cabinet.", "/shop"),
@@ -31,6 +32,14 @@ function ShopItem() {
   const p = Route.useLoaderData();
   return (
     <SiteShell>
+      <JsonLd data={shopProductJsonLd(p)} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Shop", path: "/shop" },
+          { name: p.name, path: `/shop/${p.slug}` },
+        ])}
+      />
       <article className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2">
         <ProductGallery images={p.images?.length ? p.images : [p.imagePath]} alt={p.name} />
         <div>

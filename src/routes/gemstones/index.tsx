@@ -5,7 +5,7 @@ import { PageHero } from "@/components/page-hero";
 import { GemCard } from "@/components/product-card";
 import { RashiGuide } from "@/components/rashi-guide";
 import { GEMSTONES, type GemGroup } from "@/data/gemstones";
-import { pageHead, faqJsonLd, breadcrumbJsonLd } from "@/lib/seo";
+import { pageHead, faqJsonLd, breadcrumbJsonLd, itemListJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
 import { cn } from "@/lib/utils";
 
@@ -48,6 +48,12 @@ function GemstonesPage() {
           { name: "Home", path: "/" },
           { name: "Certified gemstones", path: "/gemstones" },
         ])}
+      />
+      <JsonLd
+        data={itemListJsonLd(
+          "Certified gemstones at Sadhguru Gems Solapur",
+          GEMSTONES.map((g) => ({ name: `${g.name} (${g.sanskrit})`, path: `/gemstones/${g.slug}` })),
+        )}
       />
       <JsonLd
         data={faqJsonLd([

@@ -7,7 +7,8 @@ import { buttonVariants } from "@/components/ui/button";
 import { NAVRATNA, getGemstone } from "@/data/gemstones";
 import { NAVRATNA_LORE, NAVRATNA_TRAY, getNavratnaLore } from "@/data/navratna";
 import { whatsappHref } from "@/data/site";
-import { pageHead } from "@/lib/seo";
+import { pageHead, itemListJsonLd, breadcrumbJsonLd, faqJsonLd } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { cn } from "@/lib/utils";
 import { MediaImg } from "@/components/product-photo";
 
@@ -15,8 +16,8 @@ export const Route = createFileRoute("/navratna")({
   component: NavratnaPage,
   head: () =>
     pageHead(
-      "Navratna Gemstone Benefits",
-      "Explore the nine Navratna stones — ruby, pearl, coral, emerald, yellow sapphire, diamond, blue sapphire, hessonite and cat’s eye — and the traditional benefits given to each graha. From Sadhguru Gems & Jewellers, Solapur.",
+      "Navratna gemstones in Solapur — nine graha stones",
+      "Official Navratna cabinet in Solapur: ruby, pearl, coral, emerald, yellow sapphire (Pukhraj), diamond, blue sapphire (Neelam), hessonite and cat’s eye. Sadhguru Gems & Jewellers.",
       "/navratna",
     ),
 });
@@ -40,6 +41,30 @@ function NavratnaPage() {
 
   return (
     <SiteShell>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Navratna gemstones Solapur", path: "/navratna" },
+        ])}
+      />
+      <JsonLd
+        data={itemListJsonLd(
+          "Nine Navratna gemstones",
+          NAVRATNA.map((g) => ({ name: `${g.name} (${g.sanskrit})`, path: `/gemstones/${g.slug}` })),
+        )}
+      />
+      <JsonLd
+        data={faqJsonLd([
+          {
+            q: "What are Navratna gemstones?",
+            a: "The nine Navratna are ruby, pearl, red coral, emerald, yellow sapphire, diamond, blue sapphire, hessonite and cat’s eye. Sadhguru Gems & Jewellers keeps a certified cabinet of them in Solapur.",
+          },
+          {
+            q: "Where to buy Navratna in Solapur?",
+            a: "At Sadhguru Gems & Jewellers, 106 New Sunil Nagar, Akkalkot Road, Kumbhari, Solapur 413006, or at the official website sadhgurugemsandjewellers.com.",
+          },
+        ])}
+      />
       <PageHero
         kicker="Navratna"
         title="Nine stones. Nine grahas. Benefits as the old books named them."

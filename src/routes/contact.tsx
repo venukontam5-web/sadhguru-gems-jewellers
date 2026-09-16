@@ -4,15 +4,16 @@ import { SiteShell } from "@/components/layout/header";
 import { PageHero } from "@/components/page-hero";
 import { EnquireForm } from "@/components/enquire-form";
 import { SITE, fullAddress, whatsappHref } from "@/data/site";
-import { pageHead } from "@/lib/seo";
+import { pageHead, localBusinessJsonLd, breadcrumbJsonLd } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { MediaImg } from "@/components/product-photo";
 
 export const Route = createFileRoute("/contact")({
   component: ContactPage,
   head: () =>
     pageHead(
-      "Contact",
-      "Visit Sadhguru Gems & Jewellers at 106 New Sunil Nagar, Akkalkot Road, Solapur. Call +91 70207 35981 or write on WhatsApp.",
+      "Gemstone shop contact in Solapur — visit & WhatsApp",
+      "Visit the official Sadhguru Gems & Jewellers shop at 106 New Sunil Nagar, Akkalkot Road, Kumbhari, Solapur 413006. Call +91 70207 35981 or WhatsApp.",
       "/contact",
     ),
 });
@@ -20,6 +21,13 @@ export const Route = createFileRoute("/contact")({
 function ContactPage() {
   return (
     <SiteShell>
+      <JsonLd data={localBusinessJsonLd()} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Contact Solapur shop", path: "/contact" },
+        ])}
+      />
       <PageHero
         kicker="Contact"
         title="The door on Akkalkot Road."

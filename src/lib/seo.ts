@@ -217,6 +217,60 @@ export function gemstoneJsonLd(gem: {
   };
 }
 
+export function shopProductJsonLd(p: {
+  slug: string;
+  name: string;
+  description: string;
+  imagePath: string;
+  images?: string[];
+  priceInr: number;
+  stock: number;
+  category: string;
+}) {
+  const url = `${SITE.url}/shop/${p.slug}`;
+  const imgs = (p.images?.length ? p.images : [p.imagePath]).map((src) =>
+    src.startsWith("http") ? src.split("?")[0] : `${SITE.url}${src.split("?")[0]}`,
+  );
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: p.name,
+    description: p.description,
+    image: imgs,
+    sku: p.slug,
+    category: p.category,
+    brand: { "@type": "Brand", name: SITE.legalName },
+    url,
+    offers: {
+      "@type": "Offer",
+      url,
+      priceCurrency: "INR",
+      price: String(p.priceInr),
+      availability: p.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      itemCondition: "https://schema.org/NewCondition",
+      seller: { "@type": "JewelryStore", name: SITE.legalName, url: SITE.url },
+      areaServed: { "@type": "City", name: "Solapur" },
+    },
+  };
+}
+
+export function itemListJsonLd(
+  name: string,
+  items: { name: string; path: string }[],
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name,
+    itemListElement: items.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.name,
+      url: `${SITE.url}${item.path}`,
+    })),
+  };
+}
+
 export function personJsonLd() {
   return {
     "@context": "https://schema.org",

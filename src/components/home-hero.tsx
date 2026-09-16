@@ -48,7 +48,7 @@ export function HomeHero() {
         <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-4 pt-10 pb-6 sm:px-6 lg:grid-cols-2 lg:gap-12 lg:pt-14 lg:pb-8">
           <div>
             <p className="text-xs font-medium tracking-[0.22em] text-garnet uppercase">
-              Certified gemstones & jewellery
+              Official gemstone shop · Solapur
             </p>
             <h1 className="mt-4 font-display text-[clamp(2.15rem,8vw,4.25rem)] font-semibold leading-[1.05] text-ink">
               Pure Stones
@@ -57,7 +57,7 @@ export function HomeHero() {
             <p className="mt-5 max-w-md text-base leading-relaxed text-ink-muted sm:text-lg">
               Natural. Certified. Hand-Finished.
               <span className="mt-2 block">
-                Bringing positivity, prosperity and timeless beauty to your life.
+                The official website of Sadhguru Gems & Jewellers, Akkalkot Road, Solapur — Navratna stones, gold and silver.
               </span>
             </p>
             <div className="mt-8 flex flex-wrap gap-3">

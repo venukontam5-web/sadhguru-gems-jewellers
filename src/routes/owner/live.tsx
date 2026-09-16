@@ -10,13 +10,13 @@ export const Route = createFileRoute("/owner/live")({
 });
 
 function OwnerLive() {
-  const [accountId, setAccountId] = useState(SITE.vercelAccountId);
-  const [domain, setDomain] = useState(SITE.domain);
+  const [accountId, setAccountId] = useState<string>(SITE.vercelAccountId);
+  const [domain, setDomain] = useState<string>(SITE.domain);
   const [token, setToken] = useState("");
   const [hook, setHook] = useState("");
   const [hasToken, setHasToken] = useState(false);
   const [hasHook, setHasHook] = useState(false);
-  const [githubUrl, setGithubUrl] = useState(SITE.githubUrl);
+  const [githubUrl, setGithubUrl] = useState<string>(SITE.githubUrl);
   const [vercelUrl, setVercelUrl] = useState(
     `https://vercel.com/venukontam5-3188s-projects/${SITE.vercelProject}`,
   );
@@ -115,6 +115,28 @@ function OwnerLive() {
           </dd>
         </div>
       </dl>
+
+      <div className="mt-8 rounded-2xl border border-ink/10 bg-white p-5">
+        <p className="text-[10px] tracking-[0.2em] text-bronze uppercase">Google</p>
+        <h2 className="mt-2 font-display text-2xl">Show the official shop in search</h2>
+        <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-relaxed text-ink">
+          <li>
+            Claim{" "}
+            <a className="text-garnet underline-offset-4 hover:underline" href="https://business.google.com" target="_blank" rel="noreferrer">
+              Google Business Profile
+            </a>{" "}
+            as Sadhguru Gems And Jewellers, Akkalkot Road, Solapur. Website {liveUrl}
+          </li>
+          <li>
+            Open{" "}
+            <a className="text-garnet underline-offset-4 hover:underline" href="https://search.google.com/search-console" target="_blank" rel="noreferrer">
+              Search Console
+            </a>
+            , add {domain}, submit sitemap {liveUrl}/sitemap.xml
+          </li>
+          <li>Ask every happy hand for a Google review. Local gemstone searches follow the map pin first.</li>
+        </ol>
+      </div>
 
       <form onSubmit={(e) => void onSubmit(e)} className="mt-8 space-y-4">
         <div>
