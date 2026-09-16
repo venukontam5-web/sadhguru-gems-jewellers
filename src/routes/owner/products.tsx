@@ -15,6 +15,8 @@ export const Route = createFileRoute("/owner/products")({
   component: OwnerProducts,
 });
 
+const MAX_SHOTS = 5;
+
 const empty = {
   name: "",
   slug: "",
@@ -23,6 +25,7 @@ const empty = {
   compareAt: "" as string | number,
   stock: 1,
   imagePath: "/images/ruby.jpg",
+  gallery: [] as string[],
   badge: "",
   active: true,
   description: "",
@@ -89,6 +92,7 @@ function OwnerProducts() {
       compareAt: p.compareAt ?? "",
       stock: p.stock,
       imagePath: p.imagePath,
+      gallery: (p.images?.length ? p.images : [p.imagePath]).filter(Boolean).slice(0, MAX_SHOTS),
       badge: p.badge,
       active: p.active,
       description: p.description,
@@ -99,16 +103,34 @@ function OwnerProducts() {
     setOpen(true);
   }
 
-  async function onPhoto(file: File | undefined) {
-    if (!file) return;
+  async function onPhotos(files: FileList | File[] | undefined, slot?: number) {
+    if (!files || (files instanceof FileList && !files.length)) return;
+    const list = Array.from(files as FileList | File[]);
     setUploading(true);
     setUploadError(null);
     try {
-      const ivory = await layOnIvory(file);
-      const res = await ownerUploadProductImage({
-        data: { filename: ivory.filename, dataUrl: ivory.dataUrl },
+      const uploaded: string[] = [];
+      for (const file of list.slice(0, MAX_SHOTS)) {
+        const ivory = await layOnIvory(file);
+        const res = await ownerUploadProductImage({
+          data: { filename: ivory.filename, dataUrl: ivory.dataUrl },
+        });
+        uploaded.push(res.path);
+      }
+      setForm((f) => {
+        const current = (f.gallery.length ? f.gallery : f.imagePath ? [f.imagePath] : []).filter(
+          (p) => p && p !== "/images/ruby.jpg",
+        );
+        let next = [...current];
+        if (slot != null) {
+          next[slot] = uploaded[0] ?? next[slot];
+          if (uploaded.length > 1) next = [...next.slice(0, slot + 1), ...uploaded.slice(1), ...next.slice(slot + 1)];
+        } else {
+          next = [...next, ...uploaded];
+        }
+        next = next.filter(Boolean).slice(0, MAX_SHOTS);
+        return { ...f, gallery: next, imagePath: next[0] || f.imagePath };
       });
-      setForm((f) => ({ ...f, imagePath: res.path }));
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : "The photograph did not save.");
     } finally {
@@ -135,7 +157,8 @@ function OwnerProducts() {
           priceInr: Number(form.priceInr) || 0,
           compareAt: compareRaw != null && Number.isFinite(compareRaw) ? compareRaw : null,
           stock: Number(form.stock) || 0,
-          imagePath: form.imagePath || "/images/ruby.jpg",
+          imagePath: (form.gallery[0] || form.imagePath) || "/images/ruby.jpg",
+          gallery: form.gallery.filter(Boolean).slice(0, MAX_SHOTS),
           badge: form.badge,
           active: form.active,
           description: form.description,
@@ -226,7 +249,7 @@ function OwnerProducts() {
               e.preventDefault();
               void save();
             }}
-            className="flex max-h-[92vh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl border border-white/10 bg-[#0f1c18] sm:rounded-2xl"
+            className="flex max-h-[92vh] w-full max-w-xl flex-col overflow-hidden rounded-t-2xl border border-white/10 bg-[#0f1c18] sm:rounded-2xl"
           >
             <div className="flex items-center justify-between border-b border-white/8 px-5 py-4">
               <h2 className="font-display text-2xl">{editId ? "Edit product" : "New product"}</h2>
@@ -307,31 +330,61 @@ function OwnerProducts() {
                 />
               </label>
               <label className="text-xs text-parchment/60 sm:col-span-2">
-                Photograph — laid on ivory
-                <div className="mt-2 overflow-hidden rounded-xl border border-white/10 bg-ivory">
-                  {form.imagePath ? (
-                    <ProductPhoto src={form.imagePath} alt="" rounded="rounded-none" className="aspect-square max-h-56" />
-                  ) : (
-                    <div className="grid aspect-square max-h-56 place-items-center text-sm text-ink-muted">
-                      Ivory tray
-                    </div>
-                  )}
+                Photographs — up to 5, laid on ivory
+                <div className="mt-2 grid grid-cols-5 gap-2">
+                  {Array.from({ length: MAX_SHOTS }).map((_, n) => {
+                    const src = form.gallery[n];
+                    return (
+                      <div
+                        key={n}
+                        className="relative overflow-hidden rounded-xl border border-white/10 bg-ivory"
+                      >
+                        {src ? (
+                          <ProductPhoto src={src} alt="" rounded="rounded-none" className="aspect-square" />
+                        ) : (
+                          <div className="grid aspect-square place-items-center px-1 text-center text-[10px] text-ink-muted">
+                            {n === 0 ? "Cover" : `${n + 1}`}
+                          </div>
+                        )}
+                        {src ? (
+                          <button
+                            type="button"
+                            className="absolute top-1 right-1 rounded bg-ink/70 px-1.5 text-[10px] text-parchment"
+                            onClick={() =>
+                              setForm((f) => {
+                                const gallery = f.gallery.filter((_, i) => i !== n);
+                                return { ...f, gallery, imagePath: gallery[0] || "/images/ruby.jpg" };
+                              })
+                            }
+                          >
+                            ×
+                          </button>
+                        ) : null}
+                        {n === 0 && src ? (
+                          <span className="absolute bottom-1 left-1 rounded bg-bronze px-1 text-[9px] tracking-wide text-ink uppercase">
+                            Cover
+                          </span>
+                        ) : null}
+                      </div>
+                    );
+                  })}
                 </div>
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
+                  multiple
                   className="mt-2 block w-full text-xs text-parchment/70 file:mr-3 file:rounded-lg file:border-0 file:bg-bronze file:px-3 file:py-1.5 file:text-ink"
-                  disabled={uploading}
-                  onChange={(e) => void onPhoto(e.target.files?.[0])}
+                  disabled={uploading || form.gallery.length >= MAX_SHOTS}
+                  onChange={(e) => {
+                    void onPhotos(e.target.files);
+                    e.target.value = "";
+                  }}
                 />
-                {uploading ? <p className="mt-1 text-xs text-bronze">Laying the stone on ivory…</p> : null}
+                {uploading ? <p className="mt-1 text-xs text-bronze">Laying stones on ivory…</p> : null}
                 {uploadError ? <p className="mt-1 text-xs text-red-300">{uploadError}</p> : null}
-                <input
-                  className={cn(field, "mt-2")}
-                  value={form.imagePath}
-                  onChange={(e) => setForm((f) => ({ ...f, imagePath: e.target.value }))}
-                  placeholder="/uploads/…"
-                />
+                <p className="mt-1 text-[11px] text-parchment/45">
+                  Choose 4–5 photographs at once. First is the cover on the shop.
+                </p>
               </label>
               <label className="text-xs text-parchment/60">
                 Badge

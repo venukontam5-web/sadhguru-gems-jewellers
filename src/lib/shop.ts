@@ -18,6 +18,7 @@ export type ShopProduct = {
   compareAt: number | null;
   stock: number;
   imagePath: string;
+  images?: string[];
   badge: string;
   active: boolean;
   description: string;

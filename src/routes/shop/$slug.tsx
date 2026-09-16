@@ -7,7 +7,7 @@ import { whatsappHref } from "@/data/site";
 import { pageHead } from "@/lib/seo";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ProductPhoto } from "@/components/product-photo";
+import { ProductGallery } from "@/components/product-gallery";
 import { AddToCartButton } from "@/components/add-to-cart";
 
 export const Route = createFileRoute("/shop/$slug")({
@@ -32,14 +32,7 @@ function ShopItem() {
   return (
     <SiteShell>
       <article className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2">
-        <ProductPhoto
-          src={p.imagePath}
-          alt={p.name}
-          rounded="rounded-[28px]"
-          className="aspect-square w-full shadow-card"
-          priority
-          sizes="(max-width: 1024px) 92vw, 560px"
-        />
+        <ProductGallery images={p.images?.length ? p.images : [p.imagePath]} alt={p.name} />
         <div>
           <p className="text-xs font-medium tracking-[0.2em] text-garnet uppercase">
             {p.category}

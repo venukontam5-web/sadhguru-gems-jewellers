@@ -25,6 +25,7 @@ type ProductRow = {
   location?: string;
   vendor_id?: number | null;
   vendor_name?: string;
+  gallery?: string;
 };
 
 type SlideRow = {
@@ -64,7 +65,28 @@ function mapVisit(r: {
   };
 }
 
+function parseGallery(raw: unknown, cover: string): string[] {
+  let extra: string[] = [];
+  if (Array.isArray(raw)) {
+    extra = raw.filter((x): x is string => typeof x === "string" && x.length > 0);
+  } else if (typeof raw === "string" && raw.trim()) {
+    try {
+      const parsed = JSON.parse(raw) as unknown;
+      if (Array.isArray(parsed)) extra = parsed.filter((x): x is string => typeof x === "string" && x.length > 0);
+    } catch {
+      extra = [];
+    }
+  }
+  const all = [cover, ...extra].filter(Boolean);
+  return [...new Set(all)].slice(0, 5);
+}
+
+function galleryJson(paths: string[] | undefined, cover: string) {
+  return JSON.stringify(parseGallery(paths ?? [], cover));
+}
+
 function mapProduct(r: ProductRow): ShopProduct {
+  const images = parseGallery(r.gallery, r.image_path);
   return {
     id: Number(r.id),
     slug: r.slug,
@@ -73,7 +95,8 @@ function mapProduct(r: ProductRow): ShopProduct {
     priceInr: Number(r.price_inr),
     compareAt: r.compare_at == null ? null : Number(r.compare_at),
     stock: Number(r.stock),
-    imagePath: r.image_path,
+    imagePath: images[0] || r.image_path,
+    images,
     badge: r.badge ?? "",
     active: Boolean(r.active),
     description: r.description ?? "",
@@ -355,6 +378,7 @@ const productInput = z.object({
   compareAt: z.number().min(0).nullable(),
   stock: z.number().int().min(0),
   imagePath: z.string().min(1).max(240),
+  gallery: z.array(z.string().max(240)).max(5).optional(),
   badge: z.string().max(40),
   active: z.boolean(),
   description: z.string().max(2000),
@@ -370,6 +394,8 @@ export const ownerSaveProduct = createServerFn({ method: "POST" })
     const unit = data.category === "Gemstones" ? "ct" : "pc";
     const location = trayFor(data.category);
     const vendorId = data.vendorId ?? null;
+    const cover = data.imagePath;
+    const gallery = galleryJson(data.gallery, cover);
     if (data.id) {
       const prev = await sql<{ stock: number }>`select stock from products where id = ${data.id} limit 1`;
       if (!prev[0]) throw new Error("That piece is no longer in the book.");
@@ -381,7 +407,8 @@ export const ownerSaveProduct = createServerFn({ method: "POST" })
           price_inr = ${data.priceInr},
           compare_at = ${data.compareAt},
           stock = ${data.stock},
-          image_path = ${data.imagePath},
+          image_path = ${cover},
+          gallery = ${gallery},
           badge = ${data.badge},
           active = ${data.active},
           description = ${data.description},
@@ -406,12 +433,12 @@ export const ownerSaveProduct = createServerFn({ method: "POST" })
     const inserted = await sql<{ id: number }>`
       insert into products (
         slug, name, category, price_inr, compare_at, stock, image_path,
-        badge, active, description, updated_by, unit, location, vendor_id
+        badge, active, description, updated_by, unit, location, vendor_id, gallery
       )
       values (
         ${slug}, ${data.name.trim()}, ${data.category}, ${data.priceInr}, ${data.compareAt},
-        ${data.stock}, ${data.imagePath}, ${data.badge}, ${data.active}, ${data.description},
-        ${context.userId}, ${unit}, ${location}, ${vendorId}
+        ${data.stock}, ${cover}, ${data.badge}, ${data.active}, ${data.description},
+        ${context.userId}, ${unit}, ${location}, ${vendorId}, ${gallery}
       )
       returning id`;
     const id = Number(inserted[0]?.id ?? 0);
