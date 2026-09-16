@@ -8,6 +8,7 @@ export const LEAD_SOURCES = [
   "facebook",
   "youtube",
   "x",
+  "linkedin",
   "walk-in",
 ] as const;
 export type LeadSource = (typeof LEAD_SOURCES)[number];
@@ -96,3 +97,24 @@ Certified gemstones. Named on the bill.
 WhatsApp ${SITE.phone}
 
 #SadhguruGems #Navratna #Solapur`;
+
+export const NAVIGATOR_HOME = "https://www.linkedin.com/sales/";
+
+export const NAVIGATOR_SEARCHES = [
+  {
+    label: "Gemstone buyers · India",
+    href: "https://www.linkedin.com/search/results/people/?keywords=gemstone%20buyer%20India",
+  },
+  {
+    label: "Jewellery retailers",
+    href: "https://www.linkedin.com/search/results/people/?keywords=jewellery%20retailer%20India",
+  },
+  {
+    label: "Corporate gifting",
+    href: "https://www.linkedin.com/search/results/people/?keywords=corporate%20gifting%20jewellery",
+  },
+  {
+    label: "Solapur business",
+    href: "https://www.linkedin.com/search/results/people/?keywords=Solapur%20business%20owner",
+  },
+] as const;

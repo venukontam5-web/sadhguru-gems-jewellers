@@ -4,6 +4,8 @@ import { ownerCollectLeads, ownerListLeads, ownerSaveLead, ownerSetLead } from "
 import {
   LEAD_SOURCES,
   LEAD_STATUSES,
+  NAVIGATOR_HOME,
+  NAVIGATOR_SEARCHES,
   SITE_SHARE,
   reachMail,
   reachWhatsApp,
@@ -160,6 +162,35 @@ function OwnerLeads() {
           <a href={SITE.x} target="_blank" rel="noreferrer" className="text-sm text-bronze underline">
             X
           </a>
+        </div>
+      </section>
+
+      <section className="mt-4 rounded-2xl border border-white/8 bg-white/4 p-5">
+        <h2 className="font-display text-2xl">LinkedIn Sales Navigator</h2>
+        <p className="mt-1 text-sm text-parchment/55">
+          Search on LinkedIn. When a person replies and gives a number or mail, write them below. This desk cannot
+          open their private book.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <a
+            href={NAVIGATOR_HOME}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex h-11 items-center rounded-xl bg-bronze px-4 text-sm font-medium text-ink"
+          >
+            Open Sales Navigator
+          </a>
+          {NAVIGATOR_SEARCHES.map((s) => (
+            <a
+              key={s.label}
+              href={s.href}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex h-11 items-center rounded-xl border border-white/15 px-3 text-sm text-parchment"
+            >
+              {s.label}
+            </a>
+          ))}
         </div>
       </section>
 
