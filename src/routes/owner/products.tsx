@@ -103,8 +103,8 @@ function OwnerProducts() {
     setOpen(true);
   }
 
-  async function onPhotos(files: FileList | File[] | undefined, slot?: number) {
-    if (!files || (files instanceof FileList && !files.length)) return;
+  async function onPhotos(files: FileList | File[] | null | undefined, slot?: number) {
+    if (!files || files.length === 0) return;
     const list = Array.from(files as FileList | File[]);
     setUploading(true);
     setUploadError(null);
@@ -174,7 +174,7 @@ function OwnerProducts() {
   }
 
   const field =
-    "h-10 w-full rounded-lg border border-white/12 bg-black/30 px-3 text-sm text-parchment outline-none focus:border-bronze";
+    "h-10 w-full rounded-lg border border-ink/15 bg-white px-3 text-sm text-ink outline-none focus:border-bronze";
 
   return (
     <div>
@@ -249,95 +249,24 @@ function OwnerProducts() {
               e.preventDefault();
               void save();
             }}
-            className="flex max-h-[92vh] w-full max-w-xl flex-col overflow-hidden rounded-t-2xl border border-white/10 bg-[#0f1c18] sm:rounded-2xl"
+            className="flex max-h-[92vh] w-full max-w-xl flex-col overflow-hidden rounded-t-2xl border border-ink/10 bg-ivory text-ink sm:rounded-2xl"
           >
-            <div className="flex items-center justify-between border-b border-white/8 px-5 py-4">
+            <div className="flex items-center justify-between border-b border-ink/10 px-5 py-4">
               <h2 className="font-display text-2xl">{editId ? "Edit product" : "New product"}</h2>
-              <button type="button" onClick={() => setOpen(false)} className="text-parchment/60" aria-label="Close">
+              <button type="button" onClick={() => setOpen(false)} className="text-ink-muted" aria-label="Close">
                 ×
               </button>
             </div>
             <div className="grid flex-1 gap-3 overflow-auto p-5 sm:grid-cols-2">
-              <label className="text-xs text-parchment/60 sm:col-span-2">
-                Name *
-                <input
-                  className={cn(field, "mt-1")}
-                  value={form.name}
-                  autoFocus
-                  required
-                  onChange={(e) =>
-                    setForm((f) => ({
-                      ...f,
-                      name: e.target.value,
-                      slug: slugLocked ? f.slug : slugify(e.target.value),
-                    }))
-                  }
-                />
-              </label>
-              <label className="text-xs text-parchment/60">
-                Slug
-                <input
-                  className={cn(field, "mt-1")}
-                  value={form.slug}
-                  onChange={(e) => {
-                    setSlugLocked(true);
-                    setForm((f) => ({ ...f, slug: e.target.value }));
-                  }}
-                />
-              </label>
-              <label className="text-xs text-parchment/60">
-                Category
-                <select
-                  className={cn(field, "mt-1")}
-                  value={form.category}
-                  onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-                >
-                  {PRODUCT_CATEGORIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="text-xs text-parchment/60">
-                Price INR
-                <input
-                  type="number"
-                  min={0}
-                  className={cn(field, "mt-1")}
-                  value={form.priceInr}
-                  onChange={(e) => setForm((f) => ({ ...f, priceInr: Number(e.target.value) }))}
-                />
-              </label>
-              <label className="text-xs text-parchment/60">
-                Compare at
-                <input
-                  type="number"
-                  min={0}
-                  className={cn(field, "mt-1")}
-                  value={form.compareAt}
-                  onChange={(e) => setForm((f) => ({ ...f, compareAt: e.target.value }))}
-                />
-              </label>
-              <label className="text-xs text-parchment/60">
-                Stock
-                <input
-                  type="number"
-                  min={0}
-                  className={cn(field, "mt-1")}
-                  value={form.stock}
-                  onChange={(e) => setForm((f) => ({ ...f, stock: Number(e.target.value) }))}
-                />
-              </label>
               <fieldset className="sm:col-span-2">
-                <legend className="text-xs text-parchment/60">Photographs — 5 ivory plates</legend>
+                <legend className="text-xs text-ink-muted">Photographs — 5 ivory plates</legend>
                 <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-5">
                   {Array.from({ length: MAX_SHOTS }).map((_, n) => {
                     const src = form.gallery[n];
                     return (
                       <label
                         key={n}
-                        className="relative block cursor-pointer overflow-hidden rounded-xl border border-white/10 bg-ivory"
+                        className="relative block cursor-pointer overflow-hidden rounded-xl border border-ink/15 bg-white"
                       >
                         {src ? (
                           <ProductPhoto src={src} alt="" rounded="rounded-none" className="aspect-square" />
@@ -395,9 +324,80 @@ function OwnerProducts() {
                     }}
                   />
                 </label>
-                {uploadError ? <p className="mt-1 text-xs text-red-300">{uploadError}</p> : null}
+                {uploadError ? <p className="mt-1 text-xs text-red-500">{uploadError}</p> : null}
               </fieldset>
-              <label className="text-xs text-parchment/60">
+              <label className="text-xs text-ink-muted sm:col-span-2">
+                Name *
+                <input
+                  className={cn(field, "mt-1")}
+                  value={form.name}
+                  autoFocus
+                  required
+                  onChange={(e) =>
+                    setForm((f) => ({
+                      ...f,
+                      name: e.target.value,
+                      slug: slugLocked ? f.slug : slugify(e.target.value),
+                    }))
+                  }
+                />
+              </label>
+              <label className="text-xs text-ink-muted">
+                Slug
+                <input
+                  className={cn(field, "mt-1")}
+                  value={form.slug}
+                  onChange={(e) => {
+                    setSlugLocked(true);
+                    setForm((f) => ({ ...f, slug: e.target.value }));
+                  }}
+                />
+              </label>
+              <label className="text-xs text-ink-muted">
+                Category
+                <select
+                  className={cn(field, "mt-1")}
+                  value={form.category}
+                  onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+                >
+                  {PRODUCT_CATEGORIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-xs text-ink-muted">
+                Price INR
+                <input
+                  type="number"
+                  min={0}
+                  className={cn(field, "mt-1")}
+                  value={form.priceInr}
+                  onChange={(e) => setForm((f) => ({ ...f, priceInr: Number(e.target.value) }))}
+                />
+              </label>
+              <label className="text-xs text-ink-muted">
+                Compare at
+                <input
+                  type="number"
+                  min={0}
+                  className={cn(field, "mt-1")}
+                  value={form.compareAt}
+                  onChange={(e) => setForm((f) => ({ ...f, compareAt: e.target.value }))}
+                />
+              </label>
+              <label className="text-xs text-ink-muted">
+                Stock
+                <input
+                  type="number"
+                  min={0}
+                  className={cn(field, "mt-1")}
+                  value={form.stock}
+                  onChange={(e) => setForm((f) => ({ ...f, stock: Number(e.target.value) }))}
+                />
+              </label>
+              <label className="text-xs text-ink-muted">
                 Badge
                 <input
                   className={cn(field, "mt-1")}
@@ -405,7 +405,7 @@ function OwnerProducts() {
                   onChange={(e) => setForm((f) => ({ ...f, badge: e.target.value }))}
                 />
               </label>
-              <label className="flex items-center gap-2 text-sm text-parchment/80">
+              <label className="flex items-center gap-2 text-sm text-ink">
                 <input
                   type="checkbox"
                   checked={form.active}
@@ -413,16 +413,16 @@ function OwnerProducts() {
                 />
                 Active
               </label>
-              <label className="text-xs text-parchment/60 sm:col-span-2">
+              <label className="text-xs text-ink-muted sm:col-span-2">
                 Description
                 <textarea
-                  className="mt-1 min-h-24 w-full rounded-lg border border-white/12 bg-black/30 p-3 text-sm text-parchment outline-none"
+                  className="mt-1 min-h-24 w-full rounded-lg border border-ink/15 bg-white p-3 text-sm text-ink outline-none"
                   value={form.description}
                   onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
                 />
               </label>
             </div>
-            <div className="flex items-center justify-between gap-2 border-t border-white/8 bg-[#0f1c18] px-5 py-4">
+            <div className="flex items-center justify-between gap-2 border-t border-ink/10 bg-ivory px-5 py-4">
               {editId ? (
                 <button
                   type="button"
