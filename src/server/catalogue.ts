@@ -390,6 +390,7 @@ export const ownerSaveProduct = createServerFn({ method: "POST" })
   .validator(productInput)
   .handler(async ({ data, context }) => {
     const sql = await getSql();
+    await sql.query(`alter table products add column if not exists gallery text not null default '[]'`);
     const slug = await uniqueProductSlug(sql, data.slug || data.name, data.id);
     const unit = data.category === "Gemstones" ? "ct" : "pc";
     const location = trayFor(data.category);

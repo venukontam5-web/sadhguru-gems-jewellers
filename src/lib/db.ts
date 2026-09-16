@@ -48,6 +48,7 @@ const globalRef = globalThis as typeof globalThis & {
   __pgSqlPromise__?: Promise<Sql>;
   __pgliteInstance__?: Promise<import("@electric-sql/pglite").PGlite>;
   __pgliteMigrateChain__?: Promise<void>;
+  __productAlbumReady__?: boolean;
 };
 
 /**
@@ -100,6 +101,15 @@ export async function getSql(): Promise<Sql> {
   const sql = await globalRef.__pgSqlPromise__;
   // Re-apply pending files on HMR so a new migrations/*.sql lands without a restart.
   if (dbSource === "pglite") await openPglite();
+  if (!globalRef.__productAlbumReady__) {
+    try {
+      await sql.query(`alter table products add column if not exists gallery text not null default '[]'`);
+      await sql.query(`alter table products add column if not exists vendor_id integer`);
+      globalRef.__productAlbumReady__ = true;
+    } catch {
+      // products table may still be mid-migration on first boot
+    }
+  }
   return sql;
 }
 
