@@ -13,6 +13,8 @@ export const SITE = {
   upi: "7020735981@upi",
   razorpayMerchantId: "HKe6Oqo4oHUTM5",
   vercelAccountId: "1SiD1HMOQQ5GVQjNAHkzGboQ",
+  vercelTeamId: "team_Nun0nfuES1ixlPUD7mew7QY6",
+  vercelTeamSlug: "venukontam5-3188s-projects",
   vercelProject: "sadhguru-official",
   vercelProjectId: "prj_wpRHwkkiEdlhzaMfg1x1JhV6wzPP",
   githubRepo: "venukontam5-web/www.sadhgurugemsandjewellers.com",

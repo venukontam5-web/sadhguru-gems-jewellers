@@ -8,7 +8,8 @@ import { SITE } from "@/data/site";
 
 export const KEY_SLOTS = [
   { slot: "razorpay_merchant", label: "Razorpay merchant ID", hint: "Public till ID", kind: "public" as const },
-  { slot: "vercel_account", label: "Vercel account ID", hint: "Hobby team", kind: "public" as const },
+  { slot: "vercel_account", label: "Vercel account ID", hint: "Hobby user ID you pasted", kind: "public" as const },
+  { slot: "vercel_team", label: "Vercel team ID", hint: "venukontam5-3188's projects", kind: "public" as const },
   { slot: "vercel_project", label: "Vercel project ID", hint: "sadhguru-official", kind: "public" as const },
   { slot: "github_repo", label: "GitHub book", hint: "Official repo", kind: "public" as const },
   { slot: "razorpay_key_id", label: "Razorpay Key ID", hint: "rzp_live_… or rzp_test_…", kind: "paste" as const },
@@ -49,7 +50,7 @@ function looksValid(slot: string, value: string) {
   if (slot === "ads_id") return /^AW-\d+$/i.test(v) || v.startsWith("AW-");
   if (slot === "search_console") return v.length >= 8;
   if (slot === "house_webhook") return v.startsWith("sgj_");
-  if (slot === "razorpay_merchant" || slot === "vercel_account" || slot === "vercel_project" || slot === "github_repo") {
+  if (slot === "razorpay_merchant" || slot === "vercel_account" || slot === "vercel_project" || slot === "github_repo" || slot === "vercel_team") {
     return v.length >= 4;
   }
   return v.length >= 8;
@@ -113,8 +114,9 @@ async function seedPublicIds() {
   const sql = await getSql();
   const pubs: [string, string, string, string][] = [
     ["razorpay_merchant", "Razorpay merchant ID", SITE.razorpayMerchantId, "Stamped from the house book."],
-    ["vercel_account", "Vercel account ID", SITE.vercelAccountId, "Hobby team venukontam5-3188."],
-    ["vercel_project", "Vercel project ID", SITE.vercelProjectId, "sadhguru-official."],
+    ["vercel_account", "Vercel account ID", SITE.vercelAccountId, "Pasted by the house. Not a team_ ID."],
+    ["vercel_team", "Vercel team ID", SITE.vercelTeamId, "Verified against Vercel Hobby: venukontam5-3188s-projects."],
+    ["vercel_project", "Vercel project ID", SITE.vercelProjectId, "sadhguru-official. Git hang still empty on this team."],
     ["github_repo", "GitHub book", SITE.githubRepo, "Official shop repo."],
   ];
   for (const [slot, label, secret, note] of pubs) {
@@ -192,7 +194,13 @@ async function probe(slot: string, secret: string): Promise<{ ok: boolean; note:
       if (res.ok) return { ok: true, note: "Vercel accepted the token." };
       return { ok: false, note: "Vercel rejected the token." };
     }
-    if (slot === "vercel_hook") return { ok: true, note: "Deploy hook URL trusted." };
+    if (slot === "github_repo") {
+      const res = await fetch(`https://api.github.com/repos/${secret}`, {
+        headers: { Accept: "application/vnd.github+json", "User-Agent": "sgj-desk" },
+      });
+      if (res.ok) return { ok: true, note: "GitHub book is live." };
+      return { ok: false, note: "GitHub did not find that repo." };
+    }
     if (slot === "ga_id" || slot === "gtm_id" || slot === "ads_id" || slot === "search_console") {
       return { ok: true, note: "ID shape trusted. It will fire on the public shop." };
     }
