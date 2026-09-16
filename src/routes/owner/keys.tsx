@@ -28,6 +28,10 @@ function OwnerKeys() {
   async function load() {
     const res = await listApiKeys();
     setCards(res.cards);
+    if (res.minted) {
+      setRevealed(res.minted);
+      setFlash("House webhook minted. Copy it once — it will not be shown in full again.");
+    }
   }
 
   useEffect(() => {
@@ -158,13 +162,15 @@ function OwnerKeys() {
             </div>
             {card.hasSecret ? (
               <p className="mt-2 font-mono text-xs text-ink-muted">
-                {card.masked}
-                {card.fingerprint ? ` · ${card.fingerprint}` : ""}
+                {card.kind === "public" ? card.masked : card.masked}
+                {card.fingerprint && card.kind !== "public" ? ` · ${card.fingerprint}` : ""}
               </p>
             ) : null}
             {card.note ? <p className="mt-1 text-xs text-ink-muted">{card.note}</p> : null}
 
-            {card.kind === "generate" ? (
+            {card.kind === "public" ? (
+              <p className="mt-3 text-xs text-ink-muted">Public house ID — already on the shop.</p>
+            ) : card.kind === "generate" ? (
               <div className="mt-4 flex flex-wrap gap-2">
                 <Button type="button" size="sm" disabled={busy === card.slot} onClick={() => void mint("house_webhook")}>
                   {card.hasSecret ? "Mint a new one" : "Generate trusted key"}

@@ -7,6 +7,10 @@ import { memoClear } from "@/lib/public-cache";
 import { SITE } from "@/data/site";
 
 export const KEY_SLOTS = [
+  { slot: "razorpay_merchant", label: "Razorpay merchant ID", hint: "Public till ID", kind: "public" as const },
+  { slot: "vercel_account", label: "Vercel account ID", hint: "Hobby team", kind: "public" as const },
+  { slot: "vercel_project", label: "Vercel project ID", hint: "sadhguru-official", kind: "public" as const },
+  { slot: "github_repo", label: "GitHub book", hint: "Official repo", kind: "public" as const },
   { slot: "razorpay_key_id", label: "Razorpay Key ID", hint: "rzp_live_… or rzp_test_…", kind: "paste" as const },
   { slot: "razorpay_key_secret", label: "Razorpay Key Secret", hint: "From Razorpay dashboard → API keys", kind: "paste" as const },
   { slot: "razorpay_webhook", label: "Razorpay webhook secret", hint: "Webhook signing secret", kind: "paste" as const },
@@ -45,6 +49,9 @@ function looksValid(slot: string, value: string) {
   if (slot === "ads_id") return /^AW-\d+$/i.test(v) || v.startsWith("AW-");
   if (slot === "search_console") return v.length >= 8;
   if (slot === "house_webhook") return v.startsWith("sgj_");
+  if (slot === "razorpay_merchant" || slot === "vercel_account" || slot === "vercel_project" || slot === "github_repo") {
+    return v.length >= 4;
+  }
   return v.length >= 8;
 }
 
@@ -102,7 +109,39 @@ async function seedFromSettings() {
   }
 }
 
-async function writeThrough(slot: string, value: string) {
+async function seedPublicIds() {
+  const sql = await getSql();
+  const pubs: [string, string, string, string][] = [
+    ["razorpay_merchant", "Razorpay merchant ID", SITE.razorpayMerchantId, "Stamped from the house book."],
+    ["vercel_account", "Vercel account ID", SITE.vercelAccountId, "Hobby team venukontam5-3188."],
+    ["vercel_project", "Vercel project ID", SITE.vercelProjectId, "sadhguru-official."],
+    ["github_repo", "GitHub book", SITE.githubRepo, "Official shop repo."],
+  ];
+  for (const [slot, label, secret, note] of pubs) {
+    if (!secret) continue;
+    await sql`
+      insert into api_keys (slot, label, secret, fingerprint, kind, verified, verified_at, note, updated_at)
+      values (${slot}, ${label}, ${secret}, ${fingerprint(secret)}, 'public', true, now(), ${note}, now())
+      on conflict (slot) do update set
+        secret = excluded.secret,
+        fingerprint = excluded.fingerprint,
+        verified = true,
+        note = excluded.note,
+        updated_at = now()`;
+  }
+}
+
+async function mintHouseIfMissing(): Promise<string | null> {
+  const sql = await getSql();
+  const [row] = await sql<{ secret: string }>`select secret from api_keys where slot = 'house_webhook'`;
+  if (row?.secret) return null;
+  const secret = `sgj_${randomBytes(24).toString("base64url")}`;
+  await sql`
+    insert into api_keys (slot, label, secret, fingerprint, kind, verified, verified_at, note, updated_at)
+    values ('house_webhook', 'House webhook (generated)', ${secret}, ${fingerprint(secret)}, 'generate', true, now(), 'House-minted on first open. Copy once.', now())
+    on conflict (slot) do nothing`;
+  return secret;
+}
   const sql = await getSql();
   if (slot === "razorpay_key_id") {
     await sql`update shop_settings set rzp_key_id = ${value}, updated_at = now() where id = 1`;
@@ -169,7 +208,7 @@ export type KeyCard = {
   slot: string;
   label: string;
   hint: string;
-  kind: "paste" | "generate" | "custom";
+  kind: "paste" | "generate" | "custom" | "public";
   hasSecret: boolean;
   masked: string;
   fingerprint: string;
@@ -183,6 +222,8 @@ export const listApiKeys = createServerFn({ method: "GET" })
   .handler(async () => {
     await ensureTable();
     await seedFromSettings();
+    await seedPublicIds();
+    const minted = await mintHouseIfMissing();
     const sql = await getSql();
     const rows = await sql<{
       slot: string;
@@ -204,7 +245,7 @@ export const listApiKeys = createServerFn({ method: "GET" })
         hint: meta.hint,
         kind: meta.kind,
         hasSecret: Boolean(secret),
-        masked: mask(secret),
+        masked: meta.kind === "public" ? secret : mask(secret),
         fingerprint: row?.fingerprint ?? "",
         verified: Boolean(row?.verified),
         note: row?.note ?? "",
@@ -226,7 +267,7 @@ export const listApiKeys = createServerFn({ method: "GET" })
         updatedAt: row.updated_at ? String(row.updated_at) : null,
       });
     }
-    return { cards, liveUrl: SITE.url };
+    return { cards, liveUrl: SITE.url, minted };
   });
 
 export const saveApiKey = createServerFn({ method: "POST" })
