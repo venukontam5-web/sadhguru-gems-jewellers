@@ -3,7 +3,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { getLiveSettings, publishLive, saveLiveSettings } from "@/server/live";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
-import { SITE } from "@/data/site";
+import { GbpKit } from "@/components/gbp-kit";
 
 export const Route = createFileRoute("/owner/live")({
   component: OwnerLive,
@@ -81,7 +81,7 @@ function OwnerLive() {
   const liveUrl = `https://${domain.replace(/^https?:\/\//, "").replace(/\/$/, "")}`;
 
   return (
-    <div className="max-w-xl">
+    <div className="max-w-2xl">
       <p className="text-[10px] tracking-[0.2em] text-bronze uppercase">House</p>
       <h1 className="font-display text-4xl font-semibold">Live website</h1>
       <p className="mt-2 text-sm leading-relaxed text-parchment/60">
@@ -137,6 +137,8 @@ function OwnerLive() {
           <li>Ask every happy hand for a Google review. Local gemstone searches follow the map pin first.</li>
         </ol>
       </div>
+
+      <GbpKit />
 
       <form onSubmit={(e) => void onSubmit(e)} className="mt-8 space-y-4">
         <div>
