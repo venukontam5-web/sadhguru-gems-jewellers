@@ -329,63 +329,74 @@ function OwnerProducts() {
                   onChange={(e) => setForm((f) => ({ ...f, stock: Number(e.target.value) }))}
                 />
               </label>
-              <label className="text-xs text-parchment/60 sm:col-span-2">
-                Photographs — up to 5, laid on ivory
-                <div className="mt-2 grid grid-cols-5 gap-2">
+              <fieldset className="sm:col-span-2">
+                <legend className="text-xs text-parchment/60">Photographs — 5 ivory plates</legend>
+                <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-5">
                   {Array.from({ length: MAX_SHOTS }).map((_, n) => {
                     const src = form.gallery[n];
                     return (
-                      <div
+                      <label
                         key={n}
-                        className="relative overflow-hidden rounded-xl border border-white/10 bg-ivory"
+                        className="relative block cursor-pointer overflow-hidden rounded-xl border border-white/10 bg-ivory"
                       >
                         {src ? (
                           <ProductPhoto src={src} alt="" rounded="rounded-none" className="aspect-square" />
                         ) : (
-                          <div className="grid aspect-square place-items-center px-1 text-center text-[10px] text-ink-muted">
-                            {n === 0 ? "Cover" : `${n + 1}`}
+                          <div className="grid aspect-square place-items-center px-1 text-center text-[10px] leading-tight text-ink-muted">
+                            {n === 0 ? "1 · Cover" : `${n + 1} · Add`}
                           </div>
                         )}
                         {src ? (
                           <button
                             type="button"
-                            className="absolute top-1 right-1 rounded bg-ink/70 px-1.5 text-[10px] text-parchment"
-                            onClick={() =>
+                            className="absolute top-1 right-1 z-10 rounded bg-ink/75 px-1.5 text-[10px] text-parchment"
+                            onClick={(e) => {
+                              e.preventDefault();
                               setForm((f) => {
                                 const gallery = f.gallery.filter((_, i) => i !== n);
                                 return { ...f, gallery, imagePath: gallery[0] || "/images/ruby.jpg" };
-                              })
-                            }
+                              });
+                            }}
                           >
                             ×
                           </button>
                         ) : null}
-                        {n === 0 && src ? (
+                        {n === 0 ? (
                           <span className="absolute bottom-1 left-1 rounded bg-bronze px-1 text-[9px] tracking-wide text-ink uppercase">
                             Cover
                           </span>
                         ) : null}
-                      </div>
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          multiple={n === 0 && form.gallery.length === 0}
+                          className="sr-only"
+                          disabled={uploading}
+                          onChange={(e) => {
+                            void onPhotos(e.target.files, n);
+                            e.target.value = "";
+                          }}
+                        />
+                      </label>
                     );
                   })}
                 </div>
-                <input
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  multiple
-                  className="mt-2 block w-full text-xs text-parchment/70 file:mr-3 file:rounded-lg file:border-0 file:bg-bronze file:px-3 file:py-1.5 file:text-ink"
-                  disabled={uploading || form.gallery.length >= MAX_SHOTS}
-                  onChange={(e) => {
-                    void onPhotos(e.target.files);
-                    e.target.value = "";
-                  }}
-                />
-                {uploading ? <p className="mt-1 text-xs text-bronze">Laying stones on ivory…</p> : null}
+                <label className="mt-3 flex h-11 cursor-pointer items-center justify-center rounded-xl bg-bronze text-sm font-medium text-ink">
+                  {uploading ? "Laying on ivory…" : "Choose 4–5 photographs"}
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    multiple
+                    className="sr-only"
+                    disabled={uploading}
+                    onChange={(e) => {
+                      void onPhotos(e.target.files);
+                      e.target.value = "";
+                    }}
+                  />
+                </label>
                 {uploadError ? <p className="mt-1 text-xs text-red-300">{uploadError}</p> : null}
-                <p className="mt-1 text-[11px] text-parchment/45">
-                  Choose 4–5 photographs at once. First is the cover on the shop.
-                </p>
-              </label>
+              </fieldset>
               <label className="text-xs text-parchment/60">
                 Badge
                 <input
