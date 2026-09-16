@@ -92,7 +92,14 @@ function FormBody() {
       } else {
         const res = await authClient.signIn.email({ email: houseEmail, password });
         if (res.error) {
-          setError(res.error.message || "Email or password is not right.");
+          const m = (res.error.message || "").toLowerCase();
+          if (m.includes("origin")) {
+            setError("Refresh this page once, then try again.");
+          } else if (m.includes("invalid") || m.includes("not found") || m.includes("credential")) {
+            setError("No house account on this live shop yet. Tap Create a house account with the house Gmail.");
+          } else {
+            setError(res.error.message || "Email or password is not right.");
+          }
           return;
         }
       }
@@ -168,7 +175,8 @@ function FormBody() {
         {mode === "in" ? "First time at the desk? Create a house account" : "Already on the team? Sign in"}
       </button>
       <p className="mt-4 text-xs leading-relaxed text-parchment/45">
-        Hidden behind Est. 2016. Visitors see Sign in — this form is the house door.
+        Live shop: first time, create a house account with venukontam5@gmail.com or sgjworld@gmail.com, password 8
+        letters or more. Then Open the desk. Google may not return on this domain — the Gmail door will.
       </p>
       <div className="mt-8 flex items-center gap-3 text-[11px] tracking-wide text-parchment/40 uppercase">
         <span className="h-px flex-1 bg-white/10" />
