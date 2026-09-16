@@ -144,6 +144,8 @@ async function mintHouseIfMissing(): Promise<string | null> {
     on conflict (slot) do nothing`;
   return secret;
 }
+
+async function writeThrough(slot: string, value: string) {
   const sql = await getSql();
   if (slot === "razorpay_key_id") {
     await sql`update shop_settings set rzp_key_id = ${value}, updated_at = now() where id = 1`;
