@@ -38,7 +38,7 @@ function ShopItem() {
             {p.category}
             {p.badge ? ` · ${p.badge}` : ""}
           </p>
-          <h1 className="mt-3 font-display text-5xl font-semibold">{p.name}</h1>
+          <h1 className="mt-3 font-display text-3xl font-semibold sm:text-5xl">{p.name}</h1>
           <p className="mt-4 text-2xl font-medium">
             {inr(p.priceInr)}
             {p.compareAt ? (
@@ -49,15 +49,15 @@ function ShopItem() {
           <p className="mt-3 text-sm text-ink-muted">
             {p.stock > 0 ? `${p.stock} in the cabinet today.` : "Currently spoken for — ask for the next."}
           </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <AddToCartButton product={p} size="lg" />
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <AddToCartButton product={p} size="lg" className="w-full sm:w-auto" />
             <a
               href={whatsappHref(`Namaste, I would like to reserve ${p.name} (${inr(p.priceInr)}).`)}
-              className={cn(buttonVariants({ variant: "outline" }))}
+              className={cn(buttonVariants({ variant: "outline" }), "w-full sm:w-auto")}
             >
               Reserve on WhatsApp
             </a>
-            <Link to="/checkout" className={cn(buttonVariants({ variant: "gold" }))}>
+            <Link to="/checkout" className={cn(buttonVariants({ variant: "gold" }), "w-full sm:w-auto")}>
               Checkout
             </Link>
           </div>

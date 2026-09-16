@@ -68,18 +68,19 @@ function AuthSlot() {
     return (
       <Link
         to="/login"
-        className={cn(buttonVariants({ variant: "outline", size: "sm" }), "px-3 sm:px-4")}
+        className={cn(buttonVariants({ variant: "outline", size: "sm" }), "px-3")}
       >
         <User className="size-4" />
-        <span>Sign in</span>
+        <span className="hidden min-[420px]:inline">Sign in</span>
       </Link>
     );
   }
   return (
     <div className="flex items-center gap-2 sm:gap-3">
       {staff ? (
-        <Link to="/account" className={cn(buttonVariants({ variant: "gold", size: "sm" }))}>
-          Dashboard
+        <Link to="/account" className={cn(buttonVariants({ variant: "gold", size: "sm" }), "px-3")}>
+          <span className="sm:hidden">Desk</span>
+          <span className="hidden sm:inline">Dashboard</span>
         </Link>
       ) : (
         <Link to="/account" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
@@ -127,7 +128,7 @@ export function Header() {
         </div>
       </div>
       <div className="border-b border-ink/8 bg-parchment/90 backdrop-blur-md">
-        <div className="mx-auto flex h-[76px] max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-3 sm:h-[76px] sm:gap-4 sm:px-6">
           <HouseLogo onNavigate={() => setOpen(false)} />
           <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
             {DESKTOP.map((item) => {
@@ -167,7 +168,7 @@ export function Header() {
           </div>
         </div>
         {open ? (
-          <div className="border-t border-ink/8 bg-parchment px-4 py-4 lg:hidden">
+          <div className="max-h-[min(70dvh,calc(100dvh-5rem))] overflow-y-auto border-t border-ink/8 bg-parchment px-4 py-4 lg:hidden">
             <nav className="flex flex-col gap-1" aria-label="Mobile">
               {NAV.map((item) => (
                 <Link
@@ -354,7 +355,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <Footer />
       <a
         href={whatsappHref()}
-        className="fixed right-4 bottom-4 z-30 inline-flex size-14 items-center justify-center rounded-full bg-garnet text-ivory shadow-lg sm:right-6 sm:bottom-6"
+        className="fixed right-[max(1rem,env(safe-area-inset-right))] bottom-[max(1rem,env(safe-area-inset-bottom))] z-30 inline-flex size-14 items-center justify-center rounded-full bg-garnet text-ivory shadow-lg sm:right-6 sm:bottom-6"
         aria-label="Chat on WhatsApp"
       >
         <svg viewBox="0 0 24 24" className="size-6 fill-current" aria-hidden>

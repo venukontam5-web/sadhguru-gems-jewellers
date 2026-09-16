@@ -15,7 +15,7 @@ export function Wordmark({
         src="/images/logo.png"
         alt="Sadhguru Gems & Jewellers"
         className={cn(
-          "brand-logo h-11 w-auto max-w-[min(200px,58vw)] object-contain object-left sm:h-12 sm:max-w-[236px]",
+          "brand-logo h-10 w-auto max-w-[min(148px,42vw)] object-contain object-left sm:h-12 sm:max-w-[236px]",
           className,
         )}
       />

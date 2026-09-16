@@ -50,7 +50,7 @@ export function HomeHero() {
             <p className="text-xs font-medium tracking-[0.22em] text-garnet uppercase">
               Certified gemstones & jewellery
             </p>
-            <h1 className="mt-4 font-display text-5xl font-semibold leading-[1.05] text-ink sm:text-6xl md:text-[4.25rem]">
+            <h1 className="mt-4 font-display text-[clamp(2.15rem,8vw,4.25rem)] font-semibold leading-[1.05] text-ink">
               Pure Stones
               <span className="mt-1 block text-bronze">Brighter Lives</span>
             </h1>
@@ -158,7 +158,7 @@ export function HomeHero() {
             Good stones, brighter tomorrows.
           </p>
         </div>
-        <div className="relative mx-auto grid max-w-6xl grid-cols-2 gap-px border-t border-line sm:grid-cols-5">
+        <div className="relative mx-auto grid max-w-6xl grid-cols-2 gap-px border-t border-line sm:grid-cols-3 lg:grid-cols-5">
           {[
             { icon: Leaf, t: "Authentic & natural" },
             { icon: Gem, t: "Certified stones" },

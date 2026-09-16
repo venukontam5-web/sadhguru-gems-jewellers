@@ -20,13 +20,13 @@ export function PageHero({
         <MediaImg src={image} alt="" className="blend-photo hero-media" priority sizes="100vw" />
         <div className="blend-gilt" aria-hidden="true" />
         <div className="blend-wash" aria-hidden="true" />
-        <div className="blend-stage mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
+        <div className="blend-stage mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-28">
           {kicker ? (
             <p className="blend-kicker text-xs font-medium tracking-[0.22em] uppercase">
               {kicker}
             </p>
           ) : null}
-          <h1 className="mt-4 max-w-3xl font-display text-4xl font-semibold leading-[1.1] sm:text-5xl">
+          <h1 className="mt-4 max-w-3xl font-display text-3xl font-semibold leading-[1.1] sm:text-5xl">
             {title}
           </h1>
           {lede ? (
@@ -45,7 +45,7 @@ export function PageHero({
         {kicker ? (
           <p className="text-xs font-medium tracking-[0.22em] text-garnet uppercase">{kicker}</p>
         ) : null}
-        <h1 className="mt-3 max-w-3xl font-display text-4xl font-semibold leading-[1.1] text-ink sm:text-5xl">
+        <h1 className="mt-3 max-w-3xl font-display text-3xl font-semibold leading-[1.1] text-ink sm:text-5xl">
           {title}
         </h1>
         {lede ? (

@@ -188,7 +188,15 @@ function OwnerLayout() {
 
   const ringOk = can(capForPath(pathname));
   const desk = (
-    <div className="sgj-desk flex min-h-dvh bg-ivory text-ink">
+    <div className="sgj-desk flex min-h-dvh overflow-x-clip bg-ivory text-ink">
+      {open ? (
+        <button
+          type="button"
+          className="fixed inset-0 z-30 bg-ink/40 md:hidden"
+          aria-label="Close menu"
+          onClick={() => setOpen(false)}
+        />
+      ) : null}
       <aside
         className={cn(
           "print-hidden fixed inset-y-0 left-0 z-40 flex w-64 flex-col overflow-y-auto border-r border-ink/10 bg-[#eef4ea] p-4 transition-transform md:static md:translate-x-0",
@@ -242,7 +250,7 @@ function OwnerLayout() {
           </p>
           <UserButton />
         </header>
-        <div className="flex-1 overflow-auto p-4 sm:p-6 print:overflow-visible print:p-0">
+        <div className="min-w-0 flex-1 overflow-auto p-3 sm:p-6 print:overflow-visible print:p-0">
           {ringOk ? (
             pathname.startsWith("/owner/bills") ? (
               <BillsTouchGate>

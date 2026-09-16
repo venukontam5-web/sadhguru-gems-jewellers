@@ -25,10 +25,10 @@ export function AdminLoginScreen() {
           </p>
         </div>
       </div>
-      <div className="flex flex-col justify-center px-5 py-12 sm:px-10">
+      <div className="flex flex-col justify-center px-5 py-10 pb-[max(2.5rem,env(safe-area-inset-bottom))] sm:px-10 sm:py-12">
         <div className="mx-auto w-full max-w-sm">
-          <Link to="/" className="inline-block lg:hidden">
-            <Wordmark className="h-14 max-w-[240px]" />
+          <Link to="/" className="inline-block max-w-full lg:hidden">
+            <Wordmark className="h-12 max-w-[min(220px,80vw)]" />
           </Link>
           <p className="mt-8 text-xs font-medium tracking-[0.22em] text-bronze uppercase lg:mt-0">
             SGJ Admin
