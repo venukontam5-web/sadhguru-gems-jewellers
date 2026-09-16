@@ -113,7 +113,7 @@ function FormBody() {
       markDeskUnlocked();
       window.location.assign("/owner");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Sign-in failed.");
+      setError(friendlyAuthError(err instanceof Error ? err.message : "", mode));
     } finally {
       setBusy(false);
     }

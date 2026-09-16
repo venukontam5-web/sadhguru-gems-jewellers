@@ -148,29 +148,38 @@ async function connectNeon(): Promise<Sql> {
 }
 
 async function pgliteRuntimeModules() {
-  const dirs: string[] = [
-    join("/var/task", "_libs"),
-    join(process.cwd(), "_libs"),
-    join(process.cwd(), "node_modules/@electric-sql/pglite/dist"),
-  ];
+  const dirs: string[] = [];
   try {
     const req = createRequire(import.meta.url);
-    dirs.unshift(join(dirname(req.resolve("@electric-sql/pglite/package.json")), "dist"));
+    dirs.push(join(dirname(req.resolve("@electric-sql/pglite/package.json")), "dist"));
   } catch {
-    /* bundled — use _libs */
+    /* bundled — fall through */
   }
-  const dist = dirs.find((d) => existsSync(join(d, "pglite.data")));
-  if (!dist) return {};
-  const [wasm, initdb, data] = await Promise.all([
-    readFile(join(dist, "pglite.wasm")),
-    readFile(join(dist, "initdb.wasm")),
-    readFile(join(dist, "pglite.data")),
-  ]);
-  return {
-    pgliteWasmModule: await WebAssembly.compile(wasm),
-    initdbWasmModule: await WebAssembly.compile(initdb),
-    fsBundle: new Blob([new Uint8Array(data)]),
-  };
+  dirs.push(
+    join(process.cwd(), "node_modules/@electric-sql/pglite/dist"),
+    join("/var/task", "node_modules/@electric-sql/pglite/dist"),
+    join("/var/task", "_libs"),
+    join(process.cwd(), "_libs"),
+  );
+  for (const d of dirs) {
+    const dataPath = join(d, "pglite.data");
+    if (!existsSync(dataPath)) continue;
+    try {
+      const [wasm, initdb, data] = await Promise.all([
+        readFile(join(d, "pglite.wasm")),
+        readFile(join(d, "initdb.wasm")),
+        readFile(dataPath),
+      ]);
+      return {
+        pgliteWasmModule: await WebAssembly.compile(wasm),
+        initdbWasmModule: await WebAssembly.compile(initdb),
+        fsBundle: new Blob([new Uint8Array(data)]),
+      };
+    } catch {
+      continue;
+    }
+  }
+  return {};
 }
 
 async function connectPglite(): Promise<Sql> {
@@ -186,9 +195,15 @@ async function openPglite(): Promise<import("@electric-sql/pglite").PGlite> {
   if (!globalRef.__pgliteInstance__) {
     globalRef.__pgliteInstance__ = (async () => {
       const { PGlite } = await import("@electric-sql/pglite");
+      const mods = await pgliteRuntimeModules();
+      if (!("fsBundle" in mods)) {
+        throw new Error(
+          "The live book is still packing its files. Redeploy sgj-live from GitHub, then try again.",
+        );
+      }
       const pg = new PGlite({
         dataDir: "memory://",
-        ...(await pgliteRuntimeModules()),
+        ...mods,
         parsers: {
           [OID_INT8]: Number,
           [OID_DATE]: identity,

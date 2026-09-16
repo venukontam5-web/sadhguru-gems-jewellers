@@ -36,10 +36,14 @@ function copyPgliteAssets() {
     join(process.cwd(), ".vercel/output/functions/__server.func/_libs"),
     join(process.cwd(), ".output/server/_libs"),
   ];
+  const fnRoot = join(process.cwd(), ".vercel/output/functions");
+  if (existsSync(fnRoot)) {
+    for (const name of readdirSync(fnRoot)) {
+      dests.push(join(fnRoot, name, "_libs"));
+    }
+  }
   const files = ["pglite.data", "pglite.wasm", "initdb.wasm"] as const;
   for (const dest of dests) {
-    const parent = join(dest, "..");
-    if (!existsSync(parent) && !existsSync(dest)) continue;
     mkdirSync(dest, { recursive: true });
     for (const name of files) {
       const from = join(srcDir, name);
@@ -208,6 +212,13 @@ export default defineConfig(({ command, isPreview }) => ({
             // manifest + head-tag middleware). Nitro v3 defaults serverDir to
             // false, so removing this silently unwires /?install=1 on deploys.
             serverDir: "./server",
+            externals: {
+              traceInclude: [
+                "node_modules/@electric-sql/pglite/dist/pglite.data",
+                "node_modules/@electric-sql/pglite/dist/pglite.wasm",
+                "node_modules/@electric-sql/pglite/dist/initdb.wasm",
+              ],
+            },
             hooks: {
               compiled() {
                 copyPgliteAssets();
