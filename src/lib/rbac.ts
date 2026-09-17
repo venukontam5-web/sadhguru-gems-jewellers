@@ -68,6 +68,7 @@ const PATH_CAP: { prefix: string; cap: DeskCap }[] = [
   { prefix: "/owner/astrology", cap: "slides" },
   { prefix: "/owner/enquiries", cap: "enquiries" },
   { prefix: "/owner/leads", cap: "enquiries" },
+  { prefix: "/owner/ai", cap: "enquiries" },
   { prefix: "/owner/orders", cap: "orders" },
   { prefix: "/owner/visitors", cap: "visitors" },
   { prefix: "/owner/performance", cap: "visitors" },

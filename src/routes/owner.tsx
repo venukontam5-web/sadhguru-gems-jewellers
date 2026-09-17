@@ -30,6 +30,7 @@ import {
   Trophy,
   CreditCard,
   KeyRound,
+  BrainCircuit,
   Globe,
 } from "lucide-react";
 import { RedirectToSignIn, UserButton } from "@/lib/auth/gates";
@@ -63,6 +64,7 @@ const MAIN: DeskLink[] = [
   { to: "/owner/social", label: "Social post", icon: Share2, cap: "social" },
   { to: "/owner/enquiries", label: "Enquiries", icon: MessageSquare, cap: "enquiries" },
   { to: "/owner/leads", label: "Sales agent", icon: Bot, cap: "enquiries" },
+  { to: "/owner/ai", label: "Advanced AI", icon: BrainCircuit, cap: "enquiries" },
   { to: "/owner/orders", label: "Orders", icon: ShoppingBag, cap: "orders" },
   { to: "/owner/reviews", label: "Reviews", icon: Star, cap: "reviews" },
   { to: "/owner/visitors", label: "Online customers", icon: Users, cap: "visitors" },

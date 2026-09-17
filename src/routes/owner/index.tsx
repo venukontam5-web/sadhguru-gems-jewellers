@@ -26,6 +26,7 @@ import {
   Users,
   PackagePlus,
   KeyRound,
+  BrainCircuit,
 } from "lucide-react";
 import { money, type BillSummary } from "@/lib/bills";
 import { money as invMoney, type InventorySummary } from "@/lib/inventory";
@@ -107,6 +108,13 @@ function OwnerHome() {
           <button type="button" onClick={load} className={cn(buttonVariants({ variant: "ivory", size: "sm" }))}>
             Refresh
           </button>
+          <Link
+            to="/owner/ai"
+            className={cn(buttonVariants({ size: "sm" }), "border border-white/15 bg-white/5 text-parchment hover:bg-white/10", !can("enquiries") && "hidden")}
+          >
+            <BrainCircuit className="size-4" />
+            Advanced AI
+          </Link>
           <Link
             to="/owner/keys"
             className={cn(buttonVariants({ size: "sm" }), "border border-white/15 bg-white/5 text-parchment hover:bg-white/10", !can("appearance") && "hidden")}
@@ -572,6 +580,14 @@ function PeoplePane({ data }: { data: Dash }) {
         <Bot className="size-5 text-bronze" />
         <h3 className="mt-3 font-display text-2xl">Sales agent</h3>
         <p className="mt-1 text-sm text-parchment/55">Reach visitors. Remind. Share the website.</p>
+      </Link>
+      <Link
+        to="/owner/ai"
+        className="rounded-2xl border border-white/8 bg-white/4 p-5 transition-colors hover:border-bronze/40"
+      >
+        <BrainCircuit className="size-5 text-bronze" />
+        <h3 className="mt-3 font-display text-2xl">Advanced AI</h3>
+        <p className="mt-1 text-sm text-parchment/55">Mail, WhatsApp, FB, IG, deploy — one control.</p>
       </Link>
       <Link
         to="/owner/enquiries"

@@ -37,6 +37,7 @@ import { Route as GemstonesSlugRouteImport } from './routes/gemstones/$slug'
 import { Route as OrderCodeRouteImport } from './routes/order/$code'
 import { Route as OwnerIndexRouteImport } from './routes/owner/index'
 import { Route as OwnerAdsRouteImport } from './routes/owner/ads'
+import { Route as OwnerAiRouteImport } from './routes/owner/ai'
 import { Route as OwnerAppearanceRouteImport } from './routes/owner/appearance'
 import { Route as OwnerAstrologyRouteImport } from './routes/owner/astrology'
 import { Route as OwnerCatalogRouteImport } from './routes/owner/catalog'
@@ -219,6 +220,11 @@ const OwnerIndexRoute = OwnerIndexRouteImport.update({
 const OwnerAdsRoute = OwnerAdsRouteImport.update({
   id: '/ads',
   path: '/ads',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerAiRoute = OwnerAiRouteImport.update({
+  id: '/ai',
+  path: '/ai',
   getParentRoute: () => OwnerRoute,
 } as any)
 const OwnerAppearanceRoute = OwnerAppearanceRouteImport.update({
@@ -464,6 +470,7 @@ export interface FileRoutesByFullPath {
   '/gemstones/$slug': typeof GemstonesSlugRoute
   '/order/$code': typeof OrderCodeRoute
   '/owner/ads': typeof OwnerAdsRoute
+  '/owner/ai': typeof OwnerAiRoute
   '/owner/appearance': typeof OwnerAppearanceRoute
   '/owner/astrology': typeof OwnerAstrologyRoute
   '/owner/catalog': typeof OwnerCatalogRoute
@@ -536,6 +543,7 @@ export interface FileRoutesByTo {
   '/gemstones/$slug': typeof GemstonesSlugRoute
   '/order/$code': typeof OrderCodeRoute
   '/owner/ads': typeof OwnerAdsRoute
+  '/owner/ai': typeof OwnerAiRoute
   '/owner/appearance': typeof OwnerAppearanceRoute
   '/owner/astrology': typeof OwnerAstrologyRoute
   '/owner/catalog': typeof OwnerCatalogRoute
@@ -610,6 +618,7 @@ export interface FileRoutesById {
   '/gemstones/$slug': typeof GemstonesSlugRoute
   '/order/$code': typeof OrderCodeRoute
   '/owner/ads': typeof OwnerAdsRoute
+  '/owner/ai': typeof OwnerAiRoute
   '/owner/appearance': typeof OwnerAppearanceRoute
   '/owner/astrology': typeof OwnerAstrologyRoute
   '/owner/catalog': typeof OwnerCatalogRoute
@@ -685,6 +694,7 @@ export interface FileRouteTypes {
     | '/gemstones/$slug'
     | '/order/$code'
     | '/owner/ads'
+    | '/owner/ai'
     | '/owner/appearance'
     | '/owner/astrology'
     | '/owner/catalog'
@@ -757,6 +767,7 @@ export interface FileRouteTypes {
     | '/gemstones/$slug'
     | '/order/$code'
     | '/owner/ads'
+    | '/owner/ai'
     | '/owner/appearance'
     | '/owner/astrology'
     | '/owner/catalog'
@@ -830,6 +841,7 @@ export interface FileRouteTypes {
     | '/gemstones/$slug'
     | '/order/$code'
     | '/owner/ads'
+    | '/owner/ai'
     | '/owner/appearance'
     | '/owner/astrology'
     | '/owner/catalog'
@@ -1107,6 +1119,13 @@ declare module '@tanstack/react-router' {
       path: '/ads'
       fullPath: '/owner/ads'
       preLoaderRoute: typeof OwnerAdsRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/ai': {
+      id: '/owner/ai'
+      path: '/ai'
+      fullPath: '/owner/ai'
+      preLoaderRoute: typeof OwnerAiRouteImport
       parentRoute: typeof OwnerRoute
     }
     '/owner/appearance': {
@@ -1415,6 +1434,7 @@ declare module '@tanstack/react-router' {
 
 interface OwnerRouteChildren {
   OwnerAdsRoute: typeof OwnerAdsRoute
+  OwnerAiRoute: typeof OwnerAiRoute
   OwnerAppearanceRoute: typeof OwnerAppearanceRoute
   OwnerAstrologyRoute: typeof OwnerAstrologyRoute
   OwnerCatalogRoute: typeof OwnerCatalogRoute
@@ -1458,6 +1478,7 @@ interface OwnerRouteChildren {
 
 const OwnerRouteChildren: OwnerRouteChildren = {
   OwnerAdsRoute: OwnerAdsRoute,
+  OwnerAiRoute: OwnerAiRoute,
   OwnerAppearanceRoute: OwnerAppearanceRoute,
   OwnerAstrologyRoute: OwnerAstrologyRoute,
   OwnerCatalogRoute: OwnerCatalogRoute,
