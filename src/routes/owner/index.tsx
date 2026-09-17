@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { ownerDashboard } from "@/server/catalogue";
 import { ownerBillsSummary } from "@/server/bills";
 import { ownerInventorySummary } from "@/server/stock";
+import { ownerAiBrief, ownerAiReach } from "@/server/ai-desk";
 import { addStaff, listStaff, removeStaff, setStaffRole } from "@/server/staff";
 import { buttonVariants } from "@/components/ui/button";
 import { DeskTabs } from "@/components/owner-tabs";
@@ -39,6 +40,7 @@ export const Route = createFileRoute("/owner/")({
 
 const DASH_TABS = [
   { id: "today", label: "Overview" },
+  { id: "ai", label: "AI" },
   { id: "customers", label: "1 · Customers" },
   { id: "counter", label: "2 · Bills" },
   { id: "cabinet", label: "3 · Stock" },
@@ -56,6 +58,7 @@ function OwnerHome() {
   const [inv, setInv] = useState<InventorySummary | null>(null);
   const tabs = DASH_TABS.filter((t) => {
     if (t.id === "today") return true;
+    if (t.id === "ai") return can("enquiries");
     if (t.id === "customers") return can("visitors") || can("enquiries");
     if (t.id === "counter") return can("bills");
     if (t.id === "cabinet") return can("inventory");
@@ -134,6 +137,7 @@ function OwnerHome() {
       <DeskTabs tabs={tabs} value={tab} onChange={setTab} label="Dashboard" />
 
       {tab === "today" ? <TodayPane data={data} bills={bills} inv={inv} /> : null}
+      {tab === "ai" ? <HouseAiStrip full /> : null}
       {tab === "customers" ? <CustomersPane data={data} /> : null}
       {tab === "counter" ? <CounterPane bills={bills} /> : null}
       {tab === "cabinet" ? <CabinetPane inv={inv} /> : null}
@@ -148,6 +152,97 @@ type Dash = Awaited<ReturnType<typeof ownerDashboard>>;
 
 const toolCard =
   "rounded-2xl border border-white/8 bg-white/4 p-5 transition-colors hover:border-bronze/40";
+
+function HouseAiStrip({ full }: { full?: boolean }) {
+  const [brief, setBrief] = useState<Awaited<ReturnType<typeof ownerAiBrief>> | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [note, setNote] = useState<string | null>(null);
+  useEffect(() => {
+    void ownerAiBrief()
+      .then(setBrief)
+      .catch(() => setBrief(null));
+  }, []);
+  const nextMail = brief?.mailQueue[0];
+  const nextWa = brief?.waQueue[0];
+  async function reach(id: number, channel: "mail" | "whatsapp") {
+    setBusy(true);
+    try {
+      const res = await ownerAiReach({ data: { id, channel } });
+      if (res.href) window.open(res.href, "_blank", "noopener");
+      setNote(`Reached ${res.name || "them"}.`);
+      setBrief(await ownerAiBrief());
+    } finally {
+      setBusy(false);
+    }
+  }
+  if (!brief) {
+    return <p className="text-sm text-parchment/60">AI is collecting the book…</p>;
+  }
+  return (
+    <section className="rounded-2xl border border-bronze/40 bg-white p-5 text-ink">
+      <p className="text-[10px] tracking-[0.2em] text-bronze uppercase">Advanced AI · running</p>
+      <h2 className="mt-1 font-display text-2xl">
+        {brief.collected} on the book · autopilot {brief.autopilot ? "on" : "off"}
+      </h2>
+      {note ? <p className="mt-1 text-sm text-bronze">{note}</p> : null}
+      <div className="mt-3 flex flex-wrap gap-2">
+        {brief.needs.slice(0, 6).map((n) => (
+          <span key={n.need} className="rounded-full bg-ivory px-3 py-1 text-xs">
+            {n.need} · {n.n}
+          </span>
+        ))}
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {nextMail ? (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void reach(nextMail.id, "mail")}
+            className={cn(buttonVariants({ size: "sm" }), "bg-bronze text-ink")}
+          >
+            Mail {nextMail.name}
+          </button>
+        ) : null}
+        {nextWa ? (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void reach(nextWa.id, "whatsapp")}
+            className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
+          >
+            WhatsApp {nextWa.name}
+          </button>
+        ) : null}
+        <a
+          href={brief.importUrl}
+          target="_blank"
+          rel="noreferrer"
+          className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
+        >
+          Deploy · Authorize Vercel
+        </a>
+        <a href={brief.metaUrl} target="_blank" rel="noreferrer" className={cn(buttonVariants({ size: "sm", variant: "ghost" }))}>
+          Meta Suite
+        </a>
+        <Link to="/owner/ai" className={cn(buttonVariants({ size: "sm", variant: "ghost" }))}>
+          Full AI desk
+        </Link>
+      </div>
+      {full ? (
+        <ul className="mt-4 space-y-2">
+          {brief.customers.slice(0, 8).map((p, i) => (
+            <li key={`${p.email}-${i}`} className="flex flex-wrap justify-between gap-2 border-t border-ink/10 pt-2 text-sm">
+              <span>
+                {p.name} · {p.need}
+              </span>
+              <span className="text-ink-muted">{p.place || p.email || p.contact}</span>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </section>
+  );
+}
 
 function VisitTable({ rows }: { rows: ShopVisit[] }) {
   return (
@@ -242,6 +337,7 @@ function TodayPane({
   const slides = data.slideList.filter((s) => s.kind !== "story");
   return (
     <div className="mt-6 space-y-8">
+      <HouseAiStrip />
       <Link
         to="/owner/live"
         className="block rounded-2xl border border-white/8 bg-white/4 p-5 no-underline"
