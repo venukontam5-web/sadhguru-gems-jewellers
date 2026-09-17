@@ -1,8 +1,4 @@
 import { pendingMigrations } from "../../scripts/migration-plan.mjs";
-import { existsSync } from "node:fs";
-import { readFile } from "node:fs/promises";
-import { createRequire } from "node:module";
-import { dirname, join } from "node:path";
 
 /** Which database backend is active. */
 export type DbSource = "neon" | "pglite";
@@ -112,8 +108,7 @@ export async function getSql(): Promise<Sql> {
     );
   }
   const sql = await globalRef.__pgSqlPromise__;
-  // Re-apply pending files on HMR so a new migrations/*.sql lands without a restart.
-  if (dbSource === "pglite") await openPglite();
+  if (dbSource === "pglite" && globalRef.__pgliteGlobFp__ !== MIGRATION_FP) await openPglite();
   if (!globalRef.__productAlbumReady__) {
     try {
       await sql.query(`alter table products add column if not exists gallery text not null default '[]'`);
@@ -131,6 +126,10 @@ async function connectNeon(): Promise<Sql> {
   const pool = new pg.Pool({
     connectionString: databaseUrl,
     max: 5,
+    idleTimeoutMillis: 10_000,
+    connectionTimeoutMillis: 8_000,
+    keepAlive: true,
+    allowExitOnIdle: true,
     types: {
       getTypeParser: (oid, format) => {
         if (oid === OID_INT8) return Number;
@@ -148,6 +147,10 @@ async function connectNeon(): Promise<Sql> {
 }
 
 async function pgliteRuntimeModules() {
+  const { existsSync } = await import("node:fs");
+  const { readFile } = await import("node:fs/promises");
+  const { createRequire } = await import("node:module");
+  const { dirname, join } = await import("node:path");
   const dirs: string[] = [];
   try {
     const req = createRequire(import.meta.url);

@@ -64,6 +64,33 @@ function OwnerPerformance() {
         the live shop is.
       </p>
 
+      <section className="mt-8 rounded-2xl border border-bronze/40 bg-white p-5 text-ink">
+        <p className="text-[10px] tracking-[0.2em] text-bronze uppercase">Node.js · the hang</p>
+        <h2 className="mt-1 font-display text-2xl">How fast the book opens</h2>
+        <p className="mt-2 max-w-2xl text-sm text-ink-muted">
+          The shop runs in Mumbai. The first visitor of a quiet hour waits for the book to wake.
+          After that, the same hang answers in milliseconds. We no longer re-open the book on every
+          tap, and we only unpack the heavy files when there is no live database.
+        </p>
+        <ul className="mt-4 grid gap-3 sm:grid-cols-3 text-sm">
+          <li className="rounded-xl bg-ivory p-4">
+            <p className="text-[10px] tracking-wide text-bronze uppercase">Region</p>
+            <p className="mt-1 font-display text-xl">Mumbai · bom1</p>
+            <p className="mt-1 text-ink-muted">Near Solapur phones.</p>
+          </li>
+          <li className="rounded-xl bg-ivory p-4">
+            <p className="text-[10px] tracking-wide text-bronze uppercase">Book</p>
+            <p className="mt-1 font-display text-xl">Open once</p>
+            <p className="mt-1 text-ink-muted">Kept warm. Not rebuilt per page.</p>
+          </li>
+          <li className="rounded-xl bg-ivory p-4">
+            <p className="text-[10px] tracking-wide text-bronze uppercase">Files</p>
+            <p className="mt-1 font-display text-xl">Lazy pack</p>
+            <p className="mt-1 text-ink-muted">Heavy Node files stay off the phone.</p>
+          </li>
+        </ul>
+      </section>
+
       <section className="mt-8 rounded-2xl border border-white/8 bg-white/4 p-5">
         <p className="text-[10px] tracking-[0.2em] text-bronze uppercase">Core Web Vitals</p>
         <h2 className="mt-1 font-display text-2xl">What Google ranks</h2>
