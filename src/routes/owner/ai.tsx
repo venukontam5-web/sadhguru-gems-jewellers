@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { ownerAiBrief, ownerAiReach, ownerAiSolve, ownerAiToggle } from "@/server/ai-desk";
-import { ownerCollectLeads } from "@/server/leads";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { DeskTabs } from "@/components/owner-tabs";
@@ -41,9 +40,10 @@ function OwnerAi() {
     setBusy(true);
     setError(null);
     try {
-      const res = await ownerCollectLeads();
-      setNote(`Collected ${res.count} from visits and enquiries.`);
-      load();
+      const res = await ownerAiBrief();
+      setData(res);
+      setNote(`Collected ${res.collected} from visits and enquiries.`);
+      if (res.customers.length) setTab("needs");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not collect.");
     } finally {

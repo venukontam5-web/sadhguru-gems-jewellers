@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { capMiddleware } from "@/server/staff";
+import { authMiddleware } from "@/lib/auth/middleware";
 
 export type KeyCard = {
   slot: string;
@@ -18,14 +18,14 @@ export type KeyCard = {
 };
 
 export const listApiKeys = createServerFn({ method: "GET" })
-  .middleware([capMiddleware("appearance")])
+  .middleware([authMiddleware])
   .handler(async () => {
     const { listApiKeys: run } = await import("./keys.server");
     return run();
   });
 
 export const saveApiKey = createServerFn({ method: "POST" })
-  .middleware([capMiddleware("appearance")])
+  .middleware([authMiddleware])
   .validator(
     z.object({
       slot: z.string().max(60).optional(),
@@ -39,7 +39,7 @@ export const saveApiKey = createServerFn({ method: "POST" })
   });
 
 export const generateApiKey = createServerFn({ method: "POST" })
-  .middleware([capMiddleware("appearance")])
+  .middleware([authMiddleware])
   .validator(z.object({ slot: z.string().min(2).max(60) }))
   .handler(async ({ data }) => {
     const { generateApiKey: run } = await import("./keys.server");
@@ -47,7 +47,7 @@ export const generateApiKey = createServerFn({ method: "POST" })
   });
 
 export const verifyApiKey = createServerFn({ method: "POST" })
-  .middleware([capMiddleware("appearance")])
+  .middleware([authMiddleware])
   .validator(z.object({ slot: z.string().min(2).max(60) }))
   .handler(async ({ data }) => {
     const { verifyApiKey: run } = await import("./keys.server");
@@ -55,7 +55,7 @@ export const verifyApiKey = createServerFn({ method: "POST" })
   });
 
 export const clearApiKey = createServerFn({ method: "POST" })
-  .middleware([capMiddleware("appearance")])
+  .middleware([authMiddleware])
   .validator(z.object({ slot: z.string().min(2).max(60) }))
   .handler(async ({ data }) => {
     const { clearApiKey: run } = await import("./keys.server");

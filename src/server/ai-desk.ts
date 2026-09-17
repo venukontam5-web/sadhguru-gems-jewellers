@@ -1,16 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { capMiddleware } from "@/server/staff";
+import { authMiddleware } from "@/lib/auth/middleware";
 
 export const ownerAiBrief = createServerFn({ method: "GET" })
-  .middleware([capMiddleware("enquiries")])
+  .middleware([authMiddleware])
   .handler(async () => {
     const { ownerAiBrief: run } = await import("./ai-desk.server");
     return run();
   });
 
 export const ownerAiToggle = createServerFn({ method: "POST" })
-  .middleware([capMiddleware("enquiries")])
+  .middleware([authMiddleware])
   .validator(z.object({ on: z.boolean() }))
   .handler(async ({ data }) => {
     const { ownerAiToggle: run } = await import("./ai-desk.server");
@@ -18,7 +18,7 @@ export const ownerAiToggle = createServerFn({ method: "POST" })
   });
 
 export const ownerAiReach = createServerFn({ method: "POST" })
-  .middleware([capMiddleware("enquiries")])
+  .middleware([authMiddleware])
   .validator(z.object({ id: z.number(), channel: z.enum(["mail", "whatsapp"]) }))
   .handler(async ({ data }) => {
     const { ownerAiReach: run } = await import("./ai-desk.server");
@@ -26,7 +26,7 @@ export const ownerAiReach = createServerFn({ method: "POST" })
   });
 
 export const ownerAiSolve = createServerFn({ method: "POST" })
-  .middleware([capMiddleware("enquiries")])
+  .middleware([authMiddleware])
   .validator(z.object({ q: z.string().max(400) }))
   .handler(async ({ data }) => {
     const { ownerAiSolve: run } = await import("./ai-desk.server");
