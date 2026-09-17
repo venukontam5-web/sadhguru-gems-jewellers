@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { timingSafeEqual } from "node:crypto";
-import { loadHouseWebhook } from "@/server/keys";
+import { loadHouseWebhook } from "@/server/keys.server";
 
 function match(a: string, b: string) {
   const x = Buffer.from(a);
