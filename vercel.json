@@ -7,6 +7,14 @@
   "git": {
     "deploymentEnabled": true
   },
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "sadhgurugemsandjewellers.com" }],
+      "destination": "https://www.sadhgurugemsandjewellers.com/:path*",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

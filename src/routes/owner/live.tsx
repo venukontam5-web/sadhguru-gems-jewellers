@@ -86,20 +86,21 @@ function OwnerLive() {
       <p className="text-[10px] tracking-[0.2em] text-bronze uppercase">House</p>
       <h1 className="font-display text-4xl font-semibold">Live website</h1>
       <p className="mt-2 text-sm leading-relaxed text-parchment/60">
-        GitHub holds the book. Vercel hangs the name. They are tagged together on this desk.
+        The official name is live. GitHub holds the book. Vercel hangs the padlock. Do not import a
+        second hang.
       </p>
 
       <a
-        href={`https://vercel.com/new/import?s=${SITE.githubUrl}`}
+        href="https://www.sadhgurugemsandjewellers.com"
         target="_blank"
         rel="noreferrer"
         className="mt-6 flex min-h-12 items-center justify-center rounded-full bg-garnet px-5 text-sm font-medium text-parchment"
       >
-        Connect GitHub → Vercel (one tap)
+        Open the live shop
       </a>
       <p className="mt-2 text-xs text-parchment/50">
-        Keep team <strong>venukontam5-3188's projects</strong>. Choose repo{" "}
-        <strong>www.sadhgurugemsandjewellers.com</strong>. Allow Vercel when GitHub asks.
+        If a new import says “no dist folder”: preset <strong>Other</strong>, Output Directory empty,
+        then Redeploy. Do not create another project.
       </p>
 
       <dl className="mt-6 grid gap-3 rounded-2xl border border-bronze/40 bg-white p-5 text-sm text-ink">
@@ -114,7 +115,7 @@ function OwnerLive() {
               <a href="https://sadhgurugemsandjewellers.com" className="underline-offset-4 hover:underline" target="_blank" rel="noreferrer">
                 sadhgurugemsandjewellers.com
               </a>
-              . Padlock from Vercel after DNS.
+              . Padlock is on. Apex redirects to www.
             </span>
           </dd>
         </div>

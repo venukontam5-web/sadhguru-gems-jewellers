@@ -3,7 +3,7 @@ export const SITE = {
   shortName: "SGJ",
   legalName: "Sadhguru Gems And Jewellers",
   domain: "sadhgurugemsandjewellers.com",
-  url: "https://sadhgurugemsandjewellers.com",
+  url: "https://www.sadhgurugemsandjewellers.com",
   tagline: "Happiness Auspicious Moment",
   description:
     "Official website of Sadhguru Gems & Jewellers, Solapur. Certified Navratna gemstones, ruby, pearl, emerald, yellow sapphire, diamond, blue sapphire, gold and silver jewellery, brass and copper — Akkalkot Road, Kumbhari, Solapur 413006.",
