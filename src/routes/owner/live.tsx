@@ -98,10 +98,29 @@ function OwnerLive() {
       >
         Open the live shop
       </a>
-      <p className="mt-2 text-xs text-parchment/50">
-        If a new import says “no dist folder”: preset <strong>Other</strong>, Output Directory empty,
-        then Redeploy. Do not create another project.
-      </p>
+      <section className="mt-6 rounded-2xl border border-ink/10 bg-white p-5 text-sm text-ink">
+        <p className="text-[10px] tracking-[0.2em] text-bronze uppercase">Hang strategy</p>
+        <h2 className="mt-1 font-display text-2xl">How the shop ships</h2>
+        <ul className="mt-3 space-y-3">
+          <li>
+            <strong>Git production (this shop).</strong> Push to <span className="font-mono text-xs">main</span>{" "}
+            on GitHub. Vercel packs the hang with Nitro — a function cabinet, not a{" "}
+            <span className="font-mono text-xs">dist</span> folder. Mumbai (bom1). www is the name.
+          </li>
+          <li>
+            <strong>Do not use Vite / TanStack Start preset.</strong> That looks for{" "}
+            <span className="font-mono text-xs">dist</span> and the build goes red even when the pack is ready.
+            Preset Other. Output Directory empty.
+          </li>
+          <li>
+            <strong>Do not import a second hang.</strong> One project: <span className="font-mono text-xs">sgj-live</span>.
+            The spare “www-sadhgurugemsandjewellers-com” import can be deleted.
+          </li>
+          <li>
+            <strong>Desk Publish</strong> uses a Deploy Hook if you pasted one. Same hang, no new project.
+          </li>
+        </ul>
+      </section>
 
       <section className="mt-6 rounded-2xl border border-bronze/40 bg-ivory p-5 text-sm text-ink">
         <p className="text-[10px] tracking-[0.2em] text-bronze uppercase">Vercel desk key</p>
