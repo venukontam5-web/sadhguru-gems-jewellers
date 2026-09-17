@@ -63,7 +63,7 @@ function GemstonesPage() {
           },
           {
             q: "What is the official website of Sadhguru Gems and Jewellers?",
-            a: "The official website is https://sadhgurugemsandjewellers.com — Navratna gemstones, gold, silver, brass and copper from Solapur.",
+            a: "The official website is https://www.sadhgurugemsandjewellers.com — Navratna gemstones, gold, silver, brass and copper from Solapur.",
           },
           {
             q: "Do you sell Navratna stones like ruby and yellow sapphire?",

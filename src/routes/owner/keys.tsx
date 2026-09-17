@@ -32,7 +32,7 @@ function OwnerKeys() {
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<Success | null>(null);
-  const [liveUrl, setLiveUrl] = useState("https://sadhgurugemsandjewellers.com");
+  const [liveUrl, setLiveUrl] = useState("https://www.sadhgurugemsandjewellers.com");
 
   async function load() {
     const res = await listApiKeys();

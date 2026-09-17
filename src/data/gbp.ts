@@ -58,7 +58,7 @@ export const GBP = {
     },
     {
       q: "Is this the official website?",
-      a: "Yes. https://sadhgurugemsandjewellers.com is the official website. Do not use old sgj.world links.",
+      a: "Yes. https://www.sadhgurugemsandjewellers.com is the official website. Do not use old sgj.world links.",
     },
   ],
   weeklyPosts: [

@@ -6,6 +6,6 @@ Disallow: /account
 Disallow: /login
 Disallow: /api/
 
-Host: https://sadhgurugemsandjewellers.com
-Sitemap: https://sadhgurugemsandjewellers.com/sitemap.xml
+Host: https://www.sadhgurugemsandjewellers.com
+Sitemap: https://www.sadhgurugemsandjewellers.com/sitemap.xml
 Sitemap: https://www.sadhgurugemsandjewellers.com/sitemap.xml
