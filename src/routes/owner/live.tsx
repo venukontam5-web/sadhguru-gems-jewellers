@@ -124,7 +124,8 @@ function OwnerLive() {
           <li>
             <strong>Do not use Vite / TanStack Start preset.</strong> That looks for{" "}
             <span className="font-mono text-xs">dist</span> and the build goes red even when the pack is ready.
-            Preset Other. Output Directory empty.
+            On the New Project screen: Application Preset → <strong>Other</strong>. Open Build and Output
+            Settings. Output Directory empty. Then Deploy.
           </li>
           <li>
             <strong>Do not import a second hang.</strong> One project:{" "}
