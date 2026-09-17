@@ -32,6 +32,7 @@ import {
 import { money, type BillSummary } from "@/lib/bills";
 import { money as invMoney, type InventorySummary } from "@/lib/inventory";
 import { SEED_REVIEWS } from "@/data/reviews";
+import { SITE } from "@/data/site";
 import type { ShopVisit } from "@/lib/shop";
 
 export const Route = createFileRoute("/owner/")({
@@ -159,8 +160,11 @@ function HouseAiStrip({ full }: { full?: boolean }) {
   const [note, setNote] = useState<string | null>(null);
   useEffect(() => {
     void ownerAiBrief()
-      .then(setBrief)
-      .catch(() => setBrief(null));
+      .then((res) => {
+        setBrief(res);
+        setNote(`Collected ${res.collected}. Autopilot ${res.autopilot ? "on" : "off"}.`);
+      })
+      .catch(() => setNote("Book will fill from visits. Channels below are live."));
   }, []);
   const nextMail = brief?.mailQueue[0];
   const nextWa = brief?.waQueue[0];
@@ -175,22 +179,23 @@ function HouseAiStrip({ full }: { full?: boolean }) {
       setBusy(false);
     }
   }
-  if (!brief) {
-    return <p className="text-sm text-parchment/60">AI is collecting the book…</p>;
-  }
+  const importUrl = brief?.importUrl ?? `https://vercel.com/new/import?s=${SITE.githubUrl}`;
   return (
     <section className="rounded-2xl border border-bronze/40 bg-white p-5 text-ink">
       <p className="text-[10px] tracking-[0.2em] text-bronze uppercase">Advanced AI · running</p>
       <h2 className="mt-1 font-display text-2xl">
-        {brief.collected} on the book · autopilot {brief.autopilot ? "on" : "off"}
+        {brief ? `${brief.collected} on the book · autopilot ${brief.autopilot ? "on" : "off"}` : "All-in-one control"}
       </h2>
-      {note ? <p className="mt-1 text-sm text-bronze">{note}</p> : null}
+      {note ? <p className="mt-1 text-sm text-bronze">{note}</p> : <p className="mt-1 text-sm text-ink-muted">Collecting visits and enquiries…</p>}
       <div className="mt-3 flex flex-wrap gap-2">
-        {brief.needs.slice(0, 6).map((n) => (
-          <span key={n.need} className="rounded-full bg-ivory px-3 py-1 text-xs">
-            {n.need} · {n.n}
-          </span>
-        ))}
+        {(brief?.needs.length ? brief.needs : [{ need: "Navratna", n: 0 }, { need: "Pukhraj", n: 0 }, { need: "Repair", n: 0 }])
+          .slice(0, 6)
+          .map((n) => (
+            <span key={n.need} className="rounded-full bg-ivory px-3 py-1 text-xs">
+              {n.need}
+              {n.n ? ` · ${n.n}` : ""}
+            </span>
+          ))}
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         {nextMail ? (
@@ -202,7 +207,11 @@ function HouseAiStrip({ full }: { full?: boolean }) {
           >
             Mail {nextMail.name}
           </button>
-        ) : null}
+        ) : (
+          <a href={SITE.emailHref} className={cn(buttonVariants({ size: "sm" }), "bg-bronze text-ink")}>
+            House mail
+          </a>
+        )}
         {nextWa ? (
           <button
             type="button"
@@ -212,17 +221,19 @@ function HouseAiStrip({ full }: { full?: boolean }) {
           >
             WhatsApp {nextWa.name}
           </button>
-        ) : null}
-        <a
-          href={brief.importUrl}
-          target="_blank"
-          rel="noreferrer"
-          className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
-        >
-          Deploy · Authorize Vercel
+        ) : (
+          <a href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noreferrer" className={cn(buttonVariants({ size: "sm", variant: "outline" }))}>
+            WhatsApp Business
+          </a>
+        )}
+        <a href={SITE.facebook} target="_blank" rel="noreferrer" className={cn(buttonVariants({ size: "sm", variant: "outline" }))}>
+          Facebook
         </a>
-        <a href={brief.metaUrl} target="_blank" rel="noreferrer" className={cn(buttonVariants({ size: "sm", variant: "ghost" }))}>
-          Meta Suite
+        <a href={SITE.instagram} target="_blank" rel="noreferrer" className={cn(buttonVariants({ size: "sm", variant: "outline" }))}>
+          Instagram
+        </a>
+        <a href={importUrl} target="_blank" rel="noreferrer" className={cn(buttonVariants({ size: "sm", variant: "outline" }))}>
+          Deploy · Authorize Vercel
         </a>
         <Link to="/owner/ai" className={cn(buttonVariants({ size: "sm", variant: "ghost" }))}>
           Full AI desk
@@ -230,7 +241,7 @@ function HouseAiStrip({ full }: { full?: boolean }) {
       </div>
       {full ? (
         <ul className="mt-4 space-y-2">
-          {brief.customers.slice(0, 8).map((p, i) => (
+          {(brief?.customers ?? []).slice(0, 8).map((p, i) => (
             <li key={`${p.email}-${i}`} className="flex flex-wrap justify-between gap-2 border-t border-ink/10 pt-2 text-sm">
               <span>
                 {p.name} · {p.need}
