@@ -95,13 +95,15 @@ function OwnerPerformance() {
           <p className="text-[10px] tracking-[0.2em] text-bronze uppercase">Async Local Storage · tap trail</p>
           <h3 className="mt-1 font-display text-xl">One tap, one thread</h3>
           <p className="mt-1 text-sm text-ink-muted">
-            Node’s old Async Hooks <code className="text-xs">createHook</code> would listen to every
-            Promise and slow the hang. We use AsyncLocalStorage instead — the same API the sign-in
-            hang already uses — so this tap’s book work stays on this tap.
+            Context rides with <code className="text-xs">run</code>, not{" "}
+            <code className="text-xs">enterWith</code> (that leaks to the next tap). Concurrent
+            book reads and a later timer are bound back onto this tap. Sign-in already uses the
+            same trail.
           </p>
           {hang ? (
             <p className="mt-3 font-display text-2xl tabular-nums">
               Book ping {hang.ping} ms · {hang.sqlN} queries
+              {hang.propagated ? " · trail held" : " · trail broken"}
             </p>
           ) : (
             <p className="mt-3 text-sm text-ink-muted">Reading this tap…</p>
@@ -109,10 +111,12 @@ function OwnerPerformance() {
           {hang?.hangs.length ? (
             <ul className="mt-3 space-y-1 text-xs text-ink-muted">
               {hang.hangs.slice(0, 6).map((h) => (
-                <li key={h.at} className="flex justify-between gap-3">
-                  <span>{h.at.replace("T", " ").slice(11, 19)}</span>
+                <li key={`${h.name}-${h.at}`} className="flex justify-between gap-3">
+                  <span>
+                    {h.at.replace("T", " ").slice(11, 19)} · {h.name}
+                  </span>
                   <span className="tabular-nums">
-                    {h.ms} ms · ping {h.ping} ms
+                    {h.ms} ms · {h.sqlN} sql
                   </span>
                 </li>
               ))}

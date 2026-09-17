@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { getSql } from "@/lib/db";
 import { capMiddleware } from "@/server/staff";
+import { hangMiddleware } from "@/server/hang";
 import type { ShopEnquiry, ShopOrder, ShopProduct, ShopSlide, ShopVisit } from "@/lib/shop";
 import { recordStockMove } from "@/server/stock";
 
@@ -278,7 +279,7 @@ export const getOrderByCode = createServerFn({ method: "GET" })
   });
 
 export const ownerDashboard = createServerFn({ method: "GET" })
-  .middleware([capMiddleware("desk")])
+  .middleware([capMiddleware("desk"), hangMiddleware])
   .handler(async () => {
     const sql = await getSql();
     const [products] = await sql<{ n: number }>`select count(*)::int as n from products where active = true`;

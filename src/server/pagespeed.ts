@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { SITE } from "@/data/site";
 import { capMiddleware } from "@/server/staff";
+import { hangMiddleware } from "@/server/hang";
 import { parsePsi, type PsiScores } from "@/lib/pagespeed";
 
 export const runPageSpeed = createServerFn({ method: "POST" })
@@ -38,7 +39,7 @@ export const runPageSpeed = createServerFn({ method: "POST" })
   });
 
 export const ownerHangPulse = createServerFn({ method: "GET" })
-  .middleware([capMiddleware("visitors")])
+  .middleware([capMiddleware("visitors"), hangMiddleware])
   .handler(async () => {
     const { pulseHang } = await import("@/lib/hang.server");
     return pulseHang();
