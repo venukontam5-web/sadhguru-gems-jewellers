@@ -207,11 +207,35 @@ function OwnerLive() {
         </div>
       </form>
 
-      <p className="mt-8 text-sm">
-        <a href={importUrl} className="text-garnet underline-offset-4 hover:underline" target="_blank" rel="noreferrer">
-          Connect GitHub inside Vercel (one import)
-        </a>
-      </p>
+      <section className="mt-8 rounded-2xl border border-bronze/40 bg-white p-5 text-ink">
+        <p className="text-[10px] tracking-[0.2em] text-bronze uppercase">If Vercel says no dist folder</p>
+        <h2 className="mt-1 font-display text-2xl">Do not pick TanStack Start</h2>
+        <p className="mt-2 text-sm text-ink-muted">
+          That preset looks for a <span className="font-mono text-xs">dist</span> cabinet this shop
+          never builds. The hang writes a Vercel function pack instead.
+        </p>
+        <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm">
+          <li>
+            Project name can stay <span className="font-mono text-xs">www-sadhgurugemsandjewellers-com</span>.
+          </li>
+          <li>
+            Application Preset: <strong>Other</strong> — not TanStack Start, not Vite.
+          </li>
+          <li>
+            Root Directory: <span className="font-mono text-xs">./</span>
+          </li>
+          <li>
+            Build and Output Settings: leave Output Directory <strong>empty</strong>.
+          </li>
+          <li>Environment Variables: leave blank. Do not paste EXAMPLE_NAME.</li>
+          <li>Tap Deploy. Wait for Ready. Then Domains → {SITE.domain}.</li>
+        </ol>
+        <p className="mt-3 text-sm">
+          <a href={importUrl} className="text-garnet underline-offset-4 hover:underline" target="_blank" rel="noreferrer">
+            Open the import again
+          </a>
+        </p>
+      </section>
     </div>
   );
 }

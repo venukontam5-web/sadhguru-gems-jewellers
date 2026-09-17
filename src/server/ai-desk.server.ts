@@ -1,9 +1,8 @@
 import { getSql } from "@/lib/db";
 import { SITE } from "@/data/site";
 import { reachMail, reachWhatsApp } from "@/lib/leads";
-import { collectLeadsIntoBook } from "@/server/leads";
 
-export type AiChannel = {
+type AiChannel = {
   id: string;
   label: string;
   href: string;
@@ -11,8 +10,8 @@ export type AiChannel = {
   live: boolean;
 };
 
-export type AiNeed = { need: string; n: number };
-export type AiPerson = {
+type AiNeed = { need: string; n: number };
+type AiPerson = {
   name: string;
   need: string;
   place: string;
@@ -200,7 +199,44 @@ export async function ownerAiBrief() {
     await sql.query(`alter table shop_settings add column if not exists ai_mail_on boolean not null default false`).catch(() => undefined);
     let collected = 0;
     try {
-      collected = (await collectLeadsIntoBook()).count;
+      await sql.query(`
+        create table if not exists sales_leads (
+          id serial primary key,
+          name text not null default '',
+          source text not null default 'website',
+          handle text not null default '',
+          phone text not null default '',
+          email text not null default '',
+          interest text not null default 'Gemstones',
+          place text not null default '',
+          notes text not null default '',
+          status text not null default 'New',
+          next_at date,
+          last_reached_at timestamptz,
+          source_key text not null unique,
+          created_at timestamptz not null default now()
+        )`);
+      await sql.query(`
+        insert into sales_leads (name, source, phone, email, interest, place, status, next_at, source_key)
+        select
+          coalesce(nullif(name, ''), 'Visitor'),
+          'website',
+          coalesce(contact, ''),
+          coalesce(email, ''),
+          coalesce(nullif(requirement, ''), path, 'Gemstones'),
+          coalesce(nullif(place, ''), country, ''),
+          'New',
+          (current_date + 1),
+          'visit:' || id::text
+        from visitors
+        where coalesce(contact, '') <> '' or coalesce(email, '') <> ''
+        on conflict (source_key) do update set
+          phone = excluded.phone,
+          email = excluded.email,
+          interest = excluded.interest,
+          place = excluded.place`);
+      const [n] = await sql<{ n: number }>`select count(*)::int as n from sales_leads`;
+      collected = Number(n?.n ?? 0);
     } catch {
       collected = 0;
     }
@@ -338,4 +374,4 @@ export async function ownerAiSolve(data: { q: string }) {
       mail: Number(c?.mail ?? 0),
       wa: Number(c?.wa ?? 0),
     });
-}
+  }
