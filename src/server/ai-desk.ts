@@ -202,10 +202,17 @@ export const ownerAiBrief = createServerFn({ method: "GET" })
   .middleware([capMiddleware("enquiries")])
   .handler(async () => {
     const sql = await getSql();
-    await sql.query(`alter table shop_settings add column if not exists ai_mail_on boolean not null default false`);
-    const { count: collected } = await collectLeadsIntoBook();
-    await sql`update shop_settings set ai_mail_on = true, updated_at = now() where id = 1 and ai_mail_on is not true`;
-    const [flag] = await sql<{ ai_mail_on: boolean }>`select ai_mail_on from shop_settings where id = 1`;
+    await sql.query(`alter table shop_settings add column if not exists ai_mail_on boolean not null default false`).catch(() => undefined);
+    let collected = 0;
+    try {
+      collected = (await collectLeadsIntoBook()).count;
+    } catch {
+      collected = 0;
+    }
+    await sql`update shop_settings set ai_mail_on = true, updated_at = now() where id = 1`.catch(() => undefined);
+    const [flag] = await sql<{ ai_mail_on: boolean }>`select ai_mail_on from shop_settings where id = 1`.catch(
+      () => [{ ai_mail_on: true }],
+    );
     const people = await sql<{
       name: string;
       need: string;
@@ -217,7 +224,7 @@ export const ownerAiBrief = createServerFn({ method: "GET" })
       select name, interest as need, place, phone as contact, email, source
       from sales_leads
       order by id desc
-      limit 40`;
+      limit 40`.catch(() => []);
     const needs = await sql<{ need: string; n: number }>`
       select need, count(*)::int as n from (
         select coalesce(nullif(requirement, ''), 'Gemstones') as need from visitors
@@ -228,7 +235,7 @@ export const ownerAiBrief = createServerFn({ method: "GET" })
       ) t
       group by 1
       order by n desc
-      limit 8`;
+      limit 8`.catch(() => []);
     const queue = await sql<{
       id: number;
       name: string;
@@ -242,7 +249,7 @@ export const ownerAiBrief = createServerFn({ method: "GET" })
       from sales_leads
       where status <> 'Closed'
       order by id desc
-      limit 80`;
+      limit 80`.catch(() => []);
     const mailQueue = queue
       .filter((r) => r.email)
       .map((r) => ({

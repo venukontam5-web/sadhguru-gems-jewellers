@@ -10,29 +10,28 @@ export const Route = createFileRoute("/owner/ai")({
   component: OwnerAi,
 });
 
-const TABS = [
-  { id: "control", label: "All in one" },
-  { id: "needs", label: "Needs" },
-  { id: "mail", label: "Mail autopilot" },
-  { id: "deploy", label: "Deploy" },
-  { id: "solve", label: "Solve" },
-] as const;
-type Tab = (typeof TABS)[number]["id"];
-
 function OwnerAi() {
-  const [tab, setTab] = useState<Tab>("control");
+  const [tab, setTab] = useState<"control" | "needs" | "mail" | "deploy" | "solve">("control");
   const [data, setData] = useState<Awaited<ReturnType<typeof ownerAiBrief>> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [q, setQ] = useState("");
   const [answer, setAnswer] = useState<Awaited<ReturnType<typeof ownerAiSolve>> | null>(null);
+  const tabs = [
+    { id: "control" as const, label: "All in one" },
+    { id: "needs" as const, label: "Needs", count: data?.needs.length },
+    { id: "mail" as const, label: "Mail autopilot", count: data?.mailQueue.length },
+    { id: "deploy" as const, label: "Deploy" },
+    { id: "solve" as const, label: "Solve" },
+  ];
 
   const load = useCallback(() => {
     void ownerAiBrief()
       .then((res) => {
         setData(res);
         setNote(`On the book: ${res.collected} people. Autopilot ${res.autopilot ? "on" : "off"}.`);
+        if (res.customers.length) setTab("needs");
       })
       .catch((err: unknown) => setError(err instanceof Error ? err.message : "Could not load."));
   }, []);
@@ -114,7 +113,7 @@ function OwnerAi() {
         </Button>
       </div>
 
-      <DeskTabs tabs={TABS} value={tab} onChange={setTab} label="AI desk" />
+      <DeskTabs tabs={tabs} value={tab} onChange={setTab} label="AI desk" />
 
       {tab === "control" ? (
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
