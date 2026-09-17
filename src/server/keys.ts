@@ -37,6 +37,46 @@ function fingerprint(secret: string) {
   return createHash("sha256").update(secret).digest("hex").slice(0, 16);
 }
 
+function accessLink(slot: string): { href: string; label: string } {
+  if (slot.startsWith("razorpay")) {
+    return { href: "https://dashboard.razorpay.com/app/keys", label: "Razorpay dashboard" };
+  }
+  if (slot.startsWith("vercel")) {
+    return { href: `https://vercel.com/${SITE.vercelTeamSlug}`, label: "Vercel hang" };
+  }
+  if (slot === "github_repo") return { href: SITE.githubUrl, label: "GitHub book" };
+  if (slot === "ga_id") return { href: "https://analytics.google.com/", label: "Google Analytics" };
+  if (slot === "gtm_id") return { href: "https://tagmanager.google.com/", label: "Tag Manager" };
+  if (slot === "ads_id") return { href: "https://ads.google.com/", label: "Google Ads" };
+  if (slot === "search_console") return { href: "https://search.google.com/search-console", label: "Search Console" };
+  if (slot === "house_webhook") return { href: `${SITE.url}/api/house/hook`, label: "House webhook" };
+  return { href: SITE.url, label: "Live shop" };
+}
+
+export function detectSlot(raw: string): { slot: string; label: string } | null {
+  const v = raw.trim();
+  if (!v) return null;
+  if (v.startsWith("rzp_")) return { slot: "razorpay_key_id", label: "Razorpay Key ID" };
+  if (v.startsWith("https://api.vercel.com/v1/integrations/deploy/")) {
+    return { slot: "vercel_hook", label: "Vercel deploy hook" };
+  }
+  if (/^G-[A-Z0-9]+$/i.test(v)) return { slot: "ga_id", label: "Google Analytics (GA4)" };
+  if (/^GTM-[A-Z0-9]+$/i.test(v)) return { slot: "gtm_id", label: "Google Tag Manager" };
+  if (/^AW-/i.test(v)) return { slot: "ads_id", label: "Google Ads ID" };
+  if (v.startsWith("sgj_")) return { slot: "house_webhook", label: "House webhook (generated)" };
+  if (v.startsWith("prj_")) return { slot: "vercel_project", label: "Vercel project ID" };
+  if (v.startsWith("team_")) return { slot: "vercel_team", label: "Vercel team ID" };
+  if (/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(v)) return { slot: "github_repo", label: "GitHub book" };
+  if (v.includes("google-site-verification")) {
+    return { slot: "search_console", label: "Search Console verification" };
+  }
+  if (v.startsWith("vercel_") || (v.length >= 40 && /^[A-Za-z0-9_]+$/.test(v))) {
+    return { slot: "vercel_token", label: "Vercel token" };
+  }
+  if (v.length >= 16) return { slot: "razorpay_key_secret", label: "Razorpay Key Secret" };
+  return null;
+}
+
 function looksValid(slot: string, value: string) {
   const v = value.trim();
   if (!v) return false;
@@ -196,6 +236,7 @@ async function probe(slot: string, secret: string): Promise<{ ok: boolean; note:
       if (res.ok) return { ok: true, note: "Vercel accepted the token." };
       return { ok: false, note: "Vercel rejected the token." };
     }
+    if (slot === "vercel_hook") return { ok: true, note: "Deploy hook URL trusted." };
     if (slot === "github_repo") {
       const res = await fetch(`https://api.github.com/repos/${secret}`, {
         headers: { Accept: "application/vnd.github+json", "User-Agent": "sgj-desk" },
@@ -225,6 +266,8 @@ export type KeyCard = {
   verified: boolean;
   note: string;
   updatedAt: string | null;
+  accessHref: string;
+  accessLabel: string;
 };
 
 export const listApiKeys = createServerFn({ method: "GET" })
@@ -260,6 +303,8 @@ export const listApiKeys = createServerFn({ method: "GET" })
         verified: Boolean(row?.verified),
         note: row?.note ?? "",
         updatedAt: row?.updated_at ? String(row.updated_at) : null,
+        accessHref: accessLink(meta.slot).href,
+        accessLabel: accessLink(meta.slot).label,
       };
     });
     for (const row of rows) {
@@ -275,6 +320,8 @@ export const listApiKeys = createServerFn({ method: "GET" })
         verified: row.verified,
         note: row.note,
         updatedAt: row.updated_at ? String(row.updated_at) : null,
+        accessHref: accessLink(row.slot).href,
+        accessLabel: accessLink(row.slot).label,
       });
     }
     return { cards, liveUrl: SITE.url, minted };
@@ -284,18 +331,20 @@ export const saveApiKey = createServerFn({ method: "POST" })
   .middleware([capMiddleware("appearance")])
   .validator(
     z.object({
-      slot: z.string().min(2).max(60),
+      slot: z.string().max(60).optional(),
       label: z.string().max(80).optional(),
       secret: z.string().max(400),
     }),
   )
   .handler(async ({ data }) => {
     await ensureTable();
-    const slot = data.slot.trim().slice(0, 60);
-    const meta = KEY_SLOTS.find((s) => s.slot === slot);
-    const label = (data.label || meta?.label || slot).trim().slice(0, 80);
     const secret = data.secret.trim();
     if (!secret) throw new Error("Paste a key first.");
+    const guessed = detectSlot(secret);
+    const slot = (data.slot && data.slot !== "auto" ? data.slot.trim() : guessed?.slot || "").slice(0, 60);
+    if (!slot) throw new Error("Could not tell which service. Use a known prefix: rzp_, G-, GTM-, AW-.");
+    const meta = KEY_SLOTS.find((s) => s.slot === slot);
+    const label = (data.label || guessed?.label || meta?.label || slot).trim().slice(0, 80);
     const check = await probe(slot, secret);
     const sql = await getSql();
     await sql`
@@ -314,12 +363,17 @@ export const saveApiKey = createServerFn({ method: "POST" })
         note = excluded.note,
         updated_at = now()`;
     await writeThrough(slot, secret);
+    const access = accessLink(slot);
     return {
       slot,
+      label,
       hasSecret: true,
       masked: mask(secret),
       verified: check.ok,
       note: check.note,
+      accessHref: access.href,
+      accessLabel: access.label,
+      shopHref: SITE.url,
     };
   });
 
@@ -343,7 +397,7 @@ export const generateApiKey = createServerFn({ method: "POST" })
         verified_at = now(),
         note = excluded.note,
         updated_at = now()`;
-    return { slot, secret, masked: mask(secret), verified: true, note: "Copy now — the full key is not shown again." };
+    return { slot, secret, masked: mask(secret), verified: true, note: "Copy now — the full key is not shown again.", accessHref: accessLink(slot).href, accessLabel: accessLink(slot).label, shopHref: SITE.url };
   });
 
 export const verifyApiKey = createServerFn({ method: "POST" })
@@ -359,7 +413,7 @@ export const verifyApiKey = createServerFn({ method: "POST" })
       update api_keys
       set verified = ${check.ok}, verified_at = now(), note = ${check.note}, updated_at = now()
       where slot = ${data.slot}`;
-    return { slot: data.slot, verified: check.ok, note: check.note };
+    return { slot: data.slot, verified: check.ok, note: check.note, accessHref: accessLink(data.slot).href, accessLabel: accessLink(data.slot).label, shopHref: SITE.url };
   });
 
 export const clearApiKey = createServerFn({ method: "POST" })
@@ -371,3 +425,10 @@ export const clearApiKey = createServerFn({ method: "POST" })
     await sql`delete from api_keys where slot = ${data.slot}`;
     return { ok: true as const };
   });
+
+export async function loadHouseWebhook() {
+  await ensureTable();
+  const sql = await getSql();
+  const [row] = await sql<{ secret: string }>`select secret from api_keys where slot = 'house_webhook'`;
+  return (row?.secret || "").trim();
+}

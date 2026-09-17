@@ -64,6 +64,7 @@ import { Route as OwnerVisitorsRouteImport } from './routes/owner/visitors'
 import { Route as ShopIndexRouteImport } from './routes/shop/index'
 import { Route as ShopSlugRouteImport } from './routes/shop/$slug'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiHouseHookRouteImport } from './routes/api/house/hook'
 import { Route as ApiRazorpayWebhookRouteImport } from './routes/api/razorpay/webhook'
 import { Route as OwnerBillsIndexRouteImport } from './routes/owner/bills/index'
 import { Route as OwnerBillsIdRouteImport } from './routes/owner/bills/$id'
@@ -355,6 +356,11 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiHouseHookRoute = ApiHouseHookRouteImport.update({
+  id: '/api/house/hook',
+  path: '/api/house/hook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiRazorpayWebhookRoute = ApiRazorpayWebhookRouteImport.update({
   id: '/api/razorpay/webhook',
   path: '/api/razorpay/webhook',
@@ -487,6 +493,7 @@ export interface FileRoutesByFullPath {
   '/owner/': typeof OwnerIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/house/hook': typeof ApiHouseHookRoute
   '/api/razorpay/webhook': typeof ApiRazorpayWebhookRoute
   '/owner/bills/$id': typeof OwnerBillsIdRoute
   '/owner/bills/expenses': typeof OwnerBillsExpensesRoute
@@ -558,6 +565,7 @@ export interface FileRoutesByTo {
   '/owner': typeof OwnerIndexRoute
   '/shop': typeof ShopIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/house/hook': typeof ApiHouseHookRoute
   '/api/razorpay/webhook': typeof ApiRazorpayWebhookRoute
   '/owner/bills/$id': typeof OwnerBillsIdRoute
   '/owner/bills/expenses': typeof OwnerBillsExpensesRoute
@@ -631,6 +639,7 @@ export interface FileRoutesById {
   '/owner/': typeof OwnerIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/house/hook': typeof ApiHouseHookRoute
   '/api/razorpay/webhook': typeof ApiRazorpayWebhookRoute
   '/owner/bills/$id': typeof OwnerBillsIdRoute
   '/owner/bills/expenses': typeof OwnerBillsExpensesRoute
@@ -705,6 +714,7 @@ export interface FileRouteTypes {
     | '/owner/'
     | '/shop/'
     | '/api/auth/$'
+    | '/api/house/hook'
     | '/api/razorpay/webhook'
     | '/owner/bills/$id'
     | '/owner/bills/expenses'
@@ -776,6 +786,7 @@ export interface FileRouteTypes {
     | '/owner'
     | '/shop'
     | '/api/auth/$'
+    | '/api/house/hook'
     | '/api/razorpay/webhook'
     | '/owner/bills/$id'
     | '/owner/bills/expenses'
@@ -848,6 +859,7 @@ export interface FileRouteTypes {
     | '/owner/'
     | '/shop/'
     | '/api/auth/$'
+    | '/api/house/hook'
     | '/api/razorpay/webhook'
     | '/owner/bills/$id'
     | '/owner/bills/expenses'
@@ -895,6 +907,7 @@ export interface RootRouteChildren {
   GemstonesIndexRoute: typeof GemstonesIndexRoute
   ShopIndexRoute: typeof ShopIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiHouseHookRoute: typeof ApiHouseHookRoute
   ApiRazorpayWebhookRoute: typeof ApiRazorpayWebhookRoute
 }
 
@@ -1285,6 +1298,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/house/hook': {
+      id: '/api/house/hook'
+      path: '/api/house/hook'
+      fullPath: '/api/house/hook'
+      preLoaderRoute: typeof ApiHouseHookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/razorpay/webhook': {
       id: '/api/razorpay/webhook'
       path: '/api/razorpay/webhook'
@@ -1511,6 +1531,7 @@ const rootRouteChildren: RootRouteChildren = {
   GemstonesIndexRoute: GemstonesIndexRoute,
   ShopIndexRoute: ShopIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiHouseHookRoute: ApiHouseHookRoute,
   ApiRazorpayWebhookRoute: ApiRazorpayWebhookRoute,
 }
 export const routeTree = rootRouteImport
