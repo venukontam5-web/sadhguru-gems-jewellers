@@ -103,6 +103,20 @@ function OwnerLive() {
         then Redeploy. Do not create another project.
       </p>
 
+      <section className="mt-6 rounded-2xl border border-bronze/40 bg-ivory p-5 text-sm text-ink">
+        <p className="text-[10px] tracking-[0.2em] text-bronze uppercase">Vercel desk key</p>
+        <h2 className="mt-1 font-display text-2xl">Allow this hang to read sgj-live</h2>
+        <p className="mt-2 text-ink-muted">
+          The hang exists. GitHub is tagged. This Grok key can write but cannot list your Hobby
+          projects (403). That is why Get Project says 404.
+        </p>
+        <ol className="mt-3 list-decimal space-y-2 pl-5">
+          <li>In this Grok chat, open Connectors → Vercel → reconnect.</li>
+          <li>When Vercel asks, allow team <strong>venukontam5-3188's projects</strong>.</li>
+          <li>Come back and say “read the hang” — Get Project will then find sgj-live.</li>
+        </ol>
+      </section>
+
       <dl className="mt-6 grid gap-3 rounded-2xl border border-bronze/40 bg-white p-5 text-sm text-ink">
         <div>
           <dt className="text-[10px] tracking-[0.2em] text-bronze uppercase">1 · Domain · HTTPS</dt>
