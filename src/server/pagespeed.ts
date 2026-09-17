@@ -36,3 +36,10 @@ export const runPageSpeed = createServerFn({ method: "POST" })
     }
     return parsePsi(json, data.strategy);
   });
+
+export const ownerHangPulse = createServerFn({ method: "GET" })
+  .middleware([capMiddleware("visitors")])
+  .handler(async () => {
+    const { pulseHang } = await import("@/lib/hang.server");
+    return pulseHang();
+  });

@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Gauge } from "lucide-react";
 import { ownerDashboard, ownerListVisitors } from "@/server/catalogue";
-import { runPageSpeed } from "@/server/pagespeed";
+import { ownerHangPulse, runPageSpeed } from "@/server/pagespeed";
 import { pagespeedUrl, type PsiScores } from "@/lib/pagespeed";
 import { SITE } from "@/data/site";
 import type { ShopVisit } from "@/lib/shop";
@@ -23,12 +23,14 @@ function OwnerPerformance() {
   const [dash, setDash] = useState<Awaited<ReturnType<typeof ownerDashboard>> | null>(null);
   const [visits, setVisits] = useState<ShopVisit[]>([]);
   const [psi, setPsi] = useState<PsiScores | null>(null);
+  const [hang, setHang] = useState<Awaited<ReturnType<typeof ownerHangPulse>> | null>(null);
   const [busy, setBusy] = useState<"mobile" | "desktop" | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(() => {
     void ownerDashboard().then(setDash);
     void ownerListVisitors().then(setVisits);
+    void ownerHangPulse().then(setHang).catch(() => setHang(null));
   }, []);
   useEffect(load, [load]);
 
@@ -89,6 +91,34 @@ function OwnerPerformance() {
             <p className="mt-1 text-ink-muted">Heavy Node files stay off the phone.</p>
           </li>
         </ul>
+        <div className="mt-5 rounded-xl border border-ink/10 p-4">
+          <p className="text-[10px] tracking-[0.2em] text-bronze uppercase">Async Local Storage · tap trail</p>
+          <h3 className="mt-1 font-display text-xl">One tap, one thread</h3>
+          <p className="mt-1 text-sm text-ink-muted">
+            Node’s old Async Hooks <code className="text-xs">createHook</code> would listen to every
+            Promise and slow the hang. We use AsyncLocalStorage instead — the same API the sign-in
+            hang already uses — so this tap’s book work stays on this tap.
+          </p>
+          {hang ? (
+            <p className="mt-3 font-display text-2xl tabular-nums">
+              Book ping {hang.ping} ms · {hang.sqlN} queries
+            </p>
+          ) : (
+            <p className="mt-3 text-sm text-ink-muted">Reading this tap…</p>
+          )}
+          {hang?.hangs.length ? (
+            <ul className="mt-3 space-y-1 text-xs text-ink-muted">
+              {hang.hangs.slice(0, 6).map((h) => (
+                <li key={h.at} className="flex justify-between gap-3">
+                  <span>{h.at.replace("T", " ").slice(11, 19)}</span>
+                  <span className="tabular-nums">
+                    {h.ms} ms · ping {h.ping} ms
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
       </section>
 
       <section className="mt-8 rounded-2xl border border-white/8 bg-white/4 p-5">

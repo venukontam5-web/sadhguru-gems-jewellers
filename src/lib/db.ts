@@ -79,19 +79,34 @@ const MIGRATION_FP = Object.keys(MIGRATION_FILES).sort().join("|");
 
 type Run = <T>(text: string, params: unknown[]) => Promise<T[]>;
 
+type SqlTap = (ms: number, text: string) => void;
+const globalTap = globalThis as typeof globalThis & { __sgjSqlTap__?: SqlTap };
+
+/** Optional SQL timer for the hang (AsyncLocalStorage). Unset on the public shop. */
+export function setSqlTap(fn: SqlTap | undefined) {
+  globalTap.__sgjSqlTap__ = fn;
+}
+
 /** Wrap a query runner in the tagged-template + `.query()` `Sql` surface. */
 function toSql(run: Run): Sql {
+  const timed: Run = async (text, params) => {
+    const t0 = Date.now();
+    try {
+      return await run(text, params);
+    } finally {
+      globalTap.__sgjSqlTap__?.(Date.now() - t0, text);
+    }
+  };
   const sql = (async <T = Record<string, unknown>>(
     strings: TemplateStringsArray,
     ...values: unknown[]
   ): Promise<T[]> => {
-    // Rebuild with $1, $2, … placeholders so values stay parameterized.
     let text = strings[0];
     for (let i = 0; i < values.length; i += 1) text += `$${i + 1}${strings[i + 1]}`;
-    return run<T>(text, values);
+    return timed<T>(text, values);
   }) as Sql;
   sql.query = <T = Record<string, unknown>>(text: string, params: unknown[] = []) =>
-    run<T>(text, params);
+    timed<T>(text, params);
   return sql;
 }
 
