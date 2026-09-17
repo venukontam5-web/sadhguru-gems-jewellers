@@ -7,7 +7,7 @@ const KEY_SLOTS = [
   { slot: "razorpay_merchant", label: "Razorpay merchant ID", hint: "Public till ID", kind: "public" as const },
   { slot: "vercel_account", label: "Vercel account ID", hint: "Hobby user ID you pasted", kind: "public" as const },
   { slot: "vercel_team", label: "Vercel team ID", hint: "venukontam5-3188's projects", kind: "public" as const },
-  { slot: "vercel_project", label: "Vercel project ID", hint: "sgj-live", kind: "public" as const },
+  { slot: "vercel_project", label: "Vercel project ID", hint: SITE.vercelProjectSlug, kind: "public" as const },
   { slot: "github_repo", label: "GitHub book", hint: "Official repo", kind: "public" as const },
   { slot: "razorpay_key_id", label: "Razorpay Key ID", hint: "rzp_live_… or rzp_test_…", kind: "paste" as const },
   { slot: "razorpay_key_secret", label: "Razorpay Key Secret", hint: "From Razorpay dashboard → API keys", kind: "paste" as const },
@@ -151,7 +151,7 @@ async function seedPublicIds() {
     ["razorpay_merchant", "Razorpay merchant ID", SITE.razorpayMerchantId, "Stamped from the house book."],
     ["vercel_account", "Vercel account ID", SITE.vercelAccountId, "Pasted by the house. Not a team_ ID."],
     ["vercel_team", "Vercel team ID", SITE.vercelTeamId, "Verified against Vercel Hobby: venukontam5-3188s-projects."],
-    ["vercel_project", "Vercel project ID", SITE.vercelProjectId, "sgj-live. GitHub book is tagged on this hang."],
+    ["vercel_project", "Vercel project ID", SITE.vercelProjectId, `${SITE.vercelProjectSlug}. GitHub book is tagged on this hang.`],
     ["github_repo", "GitHub book", SITE.githubRepo, "Official shop repo."],
   ];
   for (const [slot, label, secret, note] of pubs) {

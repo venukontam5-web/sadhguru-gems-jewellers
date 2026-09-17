@@ -42,7 +42,7 @@ export const getLiveSettings = createServerFn({ method: "GET" })
       hasHook: Boolean((row?.vercel_deploy_hook || "").trim()),
       liveUrl: `https://${domain.replace(/^https?:\/\//, "")}`,
       githubUrl: `https://github.com/${githubRepo}`,
-      vercelUrl: `https://vercel.com/venukontam5-3188s-projects/${SITE.vercelProject}`,
+      vercelUrl: `https://vercel.com/${SITE.vercelTeamSlug}/${SITE.vercelProjectSlug}`,
       importUrl: `https://vercel.com/new/import?s=https://github.com/${githubRepo}`,
     };
   });

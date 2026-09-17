@@ -19,7 +19,7 @@ function OwnerLive() {
   const [hasHook, setHasHook] = useState(false);
   const [githubUrl, setGithubUrl] = useState<string>(SITE.githubUrl);
   const [vercelUrl, setVercelUrl] = useState(
-    `https://vercel.com/venukontam5-3188s-projects/${SITE.vercelProject}`,
+    `https://vercel.com/${SITE.vercelTeamSlug}/${SITE.vercelProjectSlug}`,
   );
   const [importUrl, setImportUrl] = useState(
     `https://vercel.com/new/import?s=${SITE.githubUrl}`,
@@ -99,7 +99,7 @@ function OwnerLive() {
         Open the live shop
       </a>
       <a
-        href="https://vercel.com/venukontam5-3188s-projects/sgj-live/settings/git"
+        href={`https://vercel.com/${SITE.vercelTeamSlug}/${SITE.vercelProjectSlug}/settings/git`}
         target="_blank"
         rel="noreferrer"
         className="mt-3 flex min-h-12 items-center justify-center rounded-full border border-bronze/50 bg-ivory px-5 text-sm font-medium text-ink"
@@ -109,7 +109,7 @@ function OwnerLive() {
       <p className="mt-2 text-xs text-parchment/50">
         One tap. Connect repo{" "}
         <strong>venukontam5-web/www.sadhgurugemsandjewellers.com</strong> to hang{" "}
-        <strong>sgj-live</strong>. Production branch <strong>main</strong>. After that every push
+        <strong>{SITE.vercelProjectSlug}</strong>. Production branch <strong>main</strong>. After that every push
         hangs itself. Do not import a new project.
       </p>
       <section className="mt-6 rounded-2xl border border-ink/10 bg-white p-5 text-sm text-ink">
@@ -127,8 +127,8 @@ function OwnerLive() {
             Preset Other. Output Directory empty.
           </li>
           <li>
-            <strong>Do not import a second hang.</strong> One project: <span className="font-mono text-xs">sgj-live</span>.
-            The spare “www-sadhgurugemsandjewellers-com” import can be deleted.
+            <strong>Do not import a second hang.</strong> One project:{" "}
+            <span className="font-mono text-xs">{SITE.vercelProjectSlug}</span>.
           </li>
           <li>
             <strong>Desk Publish</strong> uses a Deploy Hook if you pasted one. Same hang, no new project.
@@ -178,8 +178,8 @@ function OwnerLive() {
         <div>
           <dt className="text-[10px] tracking-[0.2em] text-bronze uppercase">3 · Vercel hang</dt>
           <dd>
-            <a href={`https://vercel.com/${SITE.vercelTeamSlug}/sgj-live`} className="text-garnet underline-offset-4 hover:underline" target="_blank" rel="noreferrer">
-              sgj-live
+            <a href={`https://vercel.com/${SITE.vercelTeamSlug}/${SITE.vercelProjectSlug}`} className="text-garnet underline-offset-4 hover:underline" target="_blank" rel="noreferrer">
+              {SITE.vercelProjectSlug}
             </a>
             <span className="mt-1 block font-mono text-xs text-ink-muted">{SITE.vercelProjectId}</span>
             <a
