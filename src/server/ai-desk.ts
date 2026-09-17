@@ -4,6 +4,7 @@ import { getSql } from "@/lib/db";
 import { capMiddleware } from "@/server/staff";
 import { SITE } from "@/data/site";
 import { reachMail, reachWhatsApp } from "@/lib/leads";
+import { collectLeadsIntoBook } from "@/server/leads";
 
 export type AiChannel = {
   id: string;
@@ -202,6 +203,8 @@ export const ownerAiBrief = createServerFn({ method: "GET" })
   .handler(async () => {
     const sql = await getSql();
     await sql.query(`alter table shop_settings add column if not exists ai_mail_on boolean not null default false`);
+    const { count: collected } = await collectLeadsIntoBook();
+    await sql`update shop_settings set ai_mail_on = true, updated_at = now() where id = 1 and ai_mail_on is not true`;
     const [flag] = await sql<{ ai_mail_on: boolean }>`select ai_mail_on from shop_settings where id = 1`;
     const people = await sql<{
       name: string;
@@ -288,6 +291,7 @@ export const ownerAiBrief = createServerFn({ method: "GET" })
       githubUrl: SITE.githubUrl,
       vercelUrl: `https://vercel.com/${SITE.vercelTeamSlug}`,
       metaUrl: "https://business.facebook.com/",
+      collected,
     };
   });
 

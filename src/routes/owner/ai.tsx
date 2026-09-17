@@ -30,7 +30,10 @@ function OwnerAi() {
 
   const load = useCallback(() => {
     void ownerAiBrief()
-      .then(setData)
+      .then((res) => {
+        setData(res);
+        setNote(`On the book: ${res.collected} people. Autopilot ${res.autopilot ? "on" : "off"}.`);
+      })
       .catch((err: unknown) => setError(err instanceof Error ? err.message : "Could not load."));
   }, []);
   useEffect(load, [load]);

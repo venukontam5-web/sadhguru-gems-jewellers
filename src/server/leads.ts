@@ -74,19 +74,9 @@ async function ensureLeadsTable() {
   return sql;
 }
 
-export const ownerListLeads = createServerFn({ method: "GET" })
-  .middleware([capMiddleware("enquiries")])
-  .handler(async () => {
-    const sql = await ensureLeadsTable();
-    const rows = await sql<Row>`select * from sales_leads order by id desc limit 400`;
-    return rows.map(mapLead);
-  });
-
-export const ownerCollectLeads = createServerFn({ method: "POST" })
-  .middleware([capMiddleware("enquiries")])
-  .handler(async () => {
-    const sql = await ensureLeadsTable();
-    await sql.query(`
+export async function collectLeadsIntoBook() {
+  const sql = await ensureLeadsTable();
+  await sql.query(`
       insert into sales_leads (name, source, phone, email, interest, place, status, next_at, source_key)
       select
         coalesce(nullif(name, ''), 'Visitor'),
@@ -105,7 +95,7 @@ export const ownerCollectLeads = createServerFn({ method: "POST" })
         email = excluded.email,
         interest = excluded.interest,
         place = excluded.place`);
-    await sql.query(`
+  await sql.query(`
       insert into sales_leads (name, source, phone, email, interest, notes, status, next_at, source_key)
       select
         name,
@@ -124,8 +114,23 @@ export const ownerCollectLeads = createServerFn({ method: "POST" })
         email = excluded.email,
         interest = excluded.interest,
         notes = excluded.notes`);
-    const [n] = await sql<{ n: number }>`select count(*)::int as n from sales_leads`;
-    return { ok: true as const, count: Number(n?.n ?? 0) };
+  const [n] = await sql<{ n: number }>`select count(*)::int as n from sales_leads`;
+  return { sql, count: Number(n?.n ?? 0) };
+}
+
+export const ownerListLeads = createServerFn({ method: "GET" })
+  .middleware([capMiddleware("enquiries")])
+  .handler(async () => {
+    const sql = await ensureLeadsTable();
+    const rows = await sql<Row>`select * from sales_leads order by id desc limit 400`;
+    return rows.map(mapLead);
+  });
+
+export const ownerCollectLeads = createServerFn({ method: "POST" })
+  .middleware([capMiddleware("enquiries")])
+  .handler(async () => {
+    const { count } = await collectLeadsIntoBook();
+    return { ok: true as const, count };
   });
 
 export const ownerSaveLead = createServerFn({ method: "POST" })
