@@ -98,6 +98,20 @@ function OwnerLive() {
       >
         Open the live shop
       </a>
+      <a
+        href="https://vercel.com/venukontam5-3188s-projects/sgj-live/settings/git"
+        target="_blank"
+        rel="noreferrer"
+        className="mt-3 flex min-h-12 items-center justify-center rounded-full border border-bronze/50 bg-ivory px-5 text-sm font-medium text-ink"
+      >
+        Connect GitHub → auto hang
+      </a>
+      <p className="mt-2 text-xs text-parchment/50">
+        One tap. Connect repo{" "}
+        <strong>venukontam5-web/www.sadhgurugemsandjewellers.com</strong> to hang{" "}
+        <strong>sgj-live</strong>. Production branch <strong>main</strong>. After that every push
+        hangs itself. Do not import a new project.
+      </p>
       <section className="mt-6 rounded-2xl border border-ink/10 bg-white p-5 text-sm text-ink">
         <p className="text-[10px] tracking-[0.2em] text-bronze uppercase">Hang strategy</p>
         <h2 className="mt-1 font-display text-2xl">How the shop ships</h2>
