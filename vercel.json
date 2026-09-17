@@ -3,6 +3,7 @@
   "name": "sgj-live",
   "framework": null,
   "buildCommand": "npm run build",
+  "outputDirectory": ".vercel/output",
   "regions": ["bom1"],
   "git": {
     "deploymentEnabled": true
