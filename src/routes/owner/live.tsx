@@ -102,33 +102,61 @@ function OwnerLive() {
         <strong>www.sadhgurugemsandjewellers.com</strong>. Allow Vercel when GitHub asks.
       </p>
 
-      <dl className="mt-6 grid gap-3 rounded-2xl border border-ink/10 bg-white p-5 text-sm">
+      <dl className="mt-6 grid gap-3 rounded-2xl border border-bronze/40 bg-white p-5 text-sm text-ink">
         <div>
-          <dt className="text-[10px] tracking-[0.2em] text-bronze uppercase">GitHub</dt>
+          <dt className="text-[10px] tracking-[0.2em] text-bronze uppercase">1 · Domain · HTTPS</dt>
+          <dd>
+            <a href="https://www.sadhgurugemsandjewellers.com" className="text-garnet underline-offset-4 hover:underline" target="_blank" rel="noreferrer">
+              www.sadhgurugemsandjewellers.com
+            </a>
+            <span className="mt-1 block text-xs text-ink-muted">
+              Also{" "}
+              <a href="https://sadhgurugemsandjewellers.com" className="underline-offset-4 hover:underline" target="_blank" rel="noreferrer">
+                sadhgurugemsandjewellers.com
+              </a>
+              . Padlock from Vercel after DNS.
+            </span>
+          </dd>
+        </div>
+        <div>
+          <dt className="text-[10px] tracking-[0.2em] text-bronze uppercase">2 · GitHub book</dt>
           <dd>
             <a href={githubUrl} className="text-garnet underline-offset-4 hover:underline" target="_blank" rel="noreferrer">
               {SITE.githubRepo}
             </a>
+            <span className="mt-1 block text-xs text-ink-muted">Public shop book. Never paste tokens here.</span>
           </dd>
         </div>
         <div>
-          <dt className="text-[10px] tracking-[0.2em] text-bronze uppercase">Vercel</dt>
+          <dt className="text-[10px] tracking-[0.2em] text-bronze uppercase">3 · Vercel hang</dt>
           <dd>
-            <a href={vercelUrl} className="text-garnet underline-offset-4 hover:underline" target="_blank" rel="noreferrer">
-              {SITE.vercelProject}
+            <a href={`https://vercel.com/${SITE.vercelTeamSlug}/sgj-live`} className="text-garnet underline-offset-4 hover:underline" target="_blank" rel="noreferrer">
+              sgj-live
             </a>
             <span className="mt-1 block font-mono text-xs text-ink-muted">{SITE.vercelProjectId}</span>
-          </dd>
-        </div>
-        <div>
-          <dt className="text-[10px] tracking-[0.2em] text-bronze uppercase">Live name</dt>
-          <dd>
-            <a href={liveUrl} className="text-garnet underline-offset-4 hover:underline" target="_blank" rel="noreferrer">
-              {liveUrl}
+            <a
+              href={`https://vercel.com/${SITE.vercelTeamSlug}/www-sadhgurugemsandjewellers-com/settings/domains`}
+              className="mt-2 inline-block text-xs text-garnet underline-offset-4 hover:underline"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Add the domain on this hang
             </a>
           </dd>
         </div>
       </dl>
+
+      <section className="mt-6 rounded-2xl border border-ink/10 bg-white p-5 text-sm text-ink">
+        <p className="text-[10px] tracking-[0.2em] text-bronze uppercase">DNS · one chain</p>
+        <h2 className="mt-1 font-display text-2xl">Point the name at Vercel</h2>
+        <p className="mt-2 text-ink-muted">
+          At your domain desk (where you bought the name). After this, Vercel hangs the padlock.
+        </p>
+        <ul className="mt-3 space-y-2 font-mono text-xs">
+          <li>A · @ · 76.76.21.21</li>
+          <li>CNAME · www · cname.vercel-dns.com</li>
+        </ul>
+      </section>
 
       <div className="mt-8 rounded-2xl border border-ink/10 bg-white p-5">
         <p className="text-[10px] tracking-[0.2em] text-bronze uppercase">Google</p>
