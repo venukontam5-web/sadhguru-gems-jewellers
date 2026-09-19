@@ -132,7 +132,9 @@ function OwnerLive() {
             <span className="font-mono text-xs">{SITE.vercelProjectSlug}</span>.
           </li>
           <li>
-            <strong>Desk Publish</strong> uses a Deploy Hook if you pasted one. Same hang, no new project.
+            If the card says Congratulations but the frame is “This page doesn’t exist”: Continue
+            to Dashboard → Settings → Application Preset <strong>Other</strong> → Output Directory
+            empty → Redeploy. That frame is Vercel’s own 404, not the shop.
           </li>
         </ul>
       </section>

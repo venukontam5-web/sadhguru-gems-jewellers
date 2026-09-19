@@ -11,6 +11,13 @@ export type HangBug = {
 
 export const HANG_BUGS: HangBug[] = [
   {
+    id: "vercel404",
+    title: "Congratulations, but the page does not exist",
+    match: "This page doesn't exist",
+    fix: "That frame is Vercel’s own 404 — the hang packed without the shop door. Continue to Dashboard → Settings → General → Application Preset Other, Output Directory empty, Redeploy. Do not import another project.",
+    solvedInBook: true,
+  },
+  {
     id: "dist",
     title: "No dist cabinet",
     match: "No Output Directory named dist",
