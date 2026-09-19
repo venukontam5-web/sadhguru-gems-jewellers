@@ -32,6 +32,7 @@ import {
   KeyRound,
   BrainCircuit,
   Globe,
+  RefreshCw,
 } from "lucide-react";
 import { RedirectToSignIn, UserButton } from "@/lib/auth/gates";
 import { useDeskAccess } from "@/lib/use-staff";
@@ -99,6 +100,7 @@ const COUNTER: DeskLink[] = [
   { to: "/owner/payments", label: "Razorpay", icon: CreditCard, cap: "appearance" },
   { to: "/owner/keys", label: "API keys", icon: KeyRound, cap: "appearance" },
   { to: "/owner/live", label: "Live website", icon: Globe, cap: "appearance" },
+  { to: "/owner/auto", label: "Auto hang", icon: RefreshCw, cap: "appearance" },
   {
     to: "/owner/inventory",
     label: "Inventory",

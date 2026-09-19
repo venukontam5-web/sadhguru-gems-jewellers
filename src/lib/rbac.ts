@@ -54,6 +54,7 @@ const PATH_CAP: { prefix: string; cap: DeskCap }[] = [
   { prefix: "/owner/payments", cap: "appearance" },
   { prefix: "/owner/keys", cap: "appearance" },
   { prefix: "/owner/live", cap: "appearance" },
+  { prefix: "/owner/auto", cap: "appearance" },
   { prefix: "/owner/bills", cap: "bills" },
   { prefix: "/owner/gst", cap: "bills" },
   { prefix: "/owner/selling", cap: "bills" },
