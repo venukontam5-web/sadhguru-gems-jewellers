@@ -40,6 +40,7 @@ import { Route as OwnerAdsRouteImport } from './routes/owner/ads'
 import { Route as OwnerAiRouteImport } from './routes/owner/ai'
 import { Route as OwnerAppearanceRouteImport } from './routes/owner/appearance'
 import { Route as OwnerAstrologyRouteImport } from './routes/owner/astrology'
+import { Route as OwnerAutoRouteImport } from './routes/owner/auto'
 import { Route as OwnerCatalogRouteImport } from './routes/owner/catalog'
 import { Route as OwnerCategoriesRouteImport } from './routes/owner/categories'
 import { Route as OwnerDiscountsRouteImport } from './routes/owner/discounts'
@@ -235,6 +236,11 @@ const OwnerAppearanceRoute = OwnerAppearanceRouteImport.update({
 const OwnerAstrologyRoute = OwnerAstrologyRouteImport.update({
   id: '/astrology',
   path: '/astrology',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerAutoRoute = OwnerAutoRouteImport.update({
+  id: '/auto',
+  path: '/auto',
   getParentRoute: () => OwnerRoute,
 } as any)
 const OwnerCatalogRoute = OwnerCatalogRouteImport.update({
@@ -473,6 +479,7 @@ export interface FileRoutesByFullPath {
   '/owner/ai': typeof OwnerAiRoute
   '/owner/appearance': typeof OwnerAppearanceRoute
   '/owner/astrology': typeof OwnerAstrologyRoute
+  '/owner/auto': typeof OwnerAutoRoute
   '/owner/catalog': typeof OwnerCatalogRoute
   '/owner/categories': typeof OwnerCategoriesRoute
   '/owner/discounts': typeof OwnerDiscountsRoute
@@ -546,6 +553,7 @@ export interface FileRoutesByTo {
   '/owner/ai': typeof OwnerAiRoute
   '/owner/appearance': typeof OwnerAppearanceRoute
   '/owner/astrology': typeof OwnerAstrologyRoute
+  '/owner/auto': typeof OwnerAutoRoute
   '/owner/catalog': typeof OwnerCatalogRoute
   '/owner/categories': typeof OwnerCategoriesRoute
   '/owner/discounts': typeof OwnerDiscountsRoute
@@ -621,6 +629,7 @@ export interface FileRoutesById {
   '/owner/ai': typeof OwnerAiRoute
   '/owner/appearance': typeof OwnerAppearanceRoute
   '/owner/astrology': typeof OwnerAstrologyRoute
+  '/owner/auto': typeof OwnerAutoRoute
   '/owner/catalog': typeof OwnerCatalogRoute
   '/owner/categories': typeof OwnerCategoriesRoute
   '/owner/discounts': typeof OwnerDiscountsRoute
@@ -697,6 +706,7 @@ export interface FileRouteTypes {
     | '/owner/ai'
     | '/owner/appearance'
     | '/owner/astrology'
+    | '/owner/auto'
     | '/owner/catalog'
     | '/owner/categories'
     | '/owner/discounts'
@@ -770,6 +780,7 @@ export interface FileRouteTypes {
     | '/owner/ai'
     | '/owner/appearance'
     | '/owner/astrology'
+    | '/owner/auto'
     | '/owner/catalog'
     | '/owner/categories'
     | '/owner/discounts'
@@ -844,6 +855,7 @@ export interface FileRouteTypes {
     | '/owner/ai'
     | '/owner/appearance'
     | '/owner/astrology'
+    | '/owner/auto'
     | '/owner/catalog'
     | '/owner/categories'
     | '/owner/discounts'
@@ -1142,6 +1154,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OwnerAstrologyRouteImport
       parentRoute: typeof OwnerRoute
     }
+    '/owner/auto': {
+      id: '/owner/auto'
+      path: '/auto'
+      fullPath: '/owner/auto'
+      preLoaderRoute: typeof OwnerAutoRouteImport
+      parentRoute: typeof OwnerRoute
+    }
     '/owner/catalog': {
       id: '/owner/catalog'
       path: '/catalog'
@@ -1437,6 +1456,7 @@ interface OwnerRouteChildren {
   OwnerAiRoute: typeof OwnerAiRoute
   OwnerAppearanceRoute: typeof OwnerAppearanceRoute
   OwnerAstrologyRoute: typeof OwnerAstrologyRoute
+  OwnerAutoRoute: typeof OwnerAutoRoute
   OwnerCatalogRoute: typeof OwnerCatalogRoute
   OwnerCategoriesRoute: typeof OwnerCategoriesRoute
   OwnerDiscountsRoute: typeof OwnerDiscountsRoute
@@ -1481,6 +1501,7 @@ const OwnerRouteChildren: OwnerRouteChildren = {
   OwnerAiRoute: OwnerAiRoute,
   OwnerAppearanceRoute: OwnerAppearanceRoute,
   OwnerAstrologyRoute: OwnerAstrologyRoute,
+  OwnerAutoRoute: OwnerAutoRoute,
   OwnerCatalogRoute: OwnerCatalogRoute,
   OwnerCategoriesRoute: OwnerCategoriesRoute,
   OwnerDiscountsRoute: OwnerDiscountsRoute,
