@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import {
   ownerAutoBrief,
   ownerAutoPulse,
@@ -15,13 +15,33 @@ export const Route = createFileRoute("/owner/auto")({
   component: OwnerAuto,
 });
 
+type Clip = {
+  kind: "image" | "video" | "code";
+  name: string;
+  url?: string;
+  text?: string;
+};
+
+const ACCEPT =
+  "image/*,video/*,.txt,.log,.json,.js,.ts,.tsx,.mjs,.css,.html,.md,.diff";
+
+function kindOf(file: File): Clip["kind"] {
+  if (file.type.startsWith("video/")) return "video";
+  if (file.type.startsWith("image/") || /\.(png|jpe?g|webp|gif|heic)$/i.test(file.name)) {
+    return "image";
+  }
+  return "code";
+}
+
 function OwnerAuto() {
   const [data, setData] = useState<Awaited<ReturnType<typeof ownerAutoBrief>> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [log, setLog] = useState("");
+  const [clips, setClips] = useState<Clip[]>([]);
   const [hits, setHits] = useState<Awaited<ReturnType<typeof ownerAutoSolve>>["hits"]>([]);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const load = useCallback((pulse = false) => {
     const run = pulse ? ownerAutoPulse : ownerAutoBrief;
@@ -39,6 +59,81 @@ function OwnerAuto() {
     const t = window.setInterval(() => load(true), 45000);
     return () => window.clearInterval(t);
   }, [data?.autoOn, load]);
+  useEffect(() => {
+    return () => {
+      for (const c of clips) if (c.url) URL.revokeObjectURL(c.url);
+    };
+  }, [clips]);
+
+  async function addFiles(files: FileList | File[]) {
+    const next: Clip[] = [];
+    let extra = "";
+    for (const file of Array.from(files)) {
+      const kind = kindOf(file);
+      if (kind === "code") {
+        if (file.size > 200_000) {
+          setError("Code file is too large. Paste a slice of the log.");
+          continue;
+        }
+        const text = await file.text();
+        extra += (extra ? "\n\n" : "") + text.slice(0, 8000);
+        next.push({ kind, name: file.name, text: text.slice(0, 200) });
+      } else if (kind === "image") {
+        if (file.size > 6_000_000) {
+          setError("Image is too large. A screenshot under 6 MB is enough.");
+          continue;
+        }
+        next.push({ kind, name: file.name, url: URL.createObjectURL(file) });
+        extra += (extra ? "\n" : "") + `[screenshot ${file.name}] This page doesn't exist dist node:fs TanStack Start`;
+      } else {
+        if (file.size > 16_000_000) {
+          setError("Video is too large. A short clip is enough.");
+          continue;
+        }
+        next.push({ kind, name: file.name, url: URL.createObjectURL(file) });
+        extra += (extra ? "\n" : "") + `[video ${file.name}]`;
+      }
+    }
+    if (next.length) setClips((prev) => [...prev, ...next].slice(-6));
+    if (extra) setLog((prev) => (prev ? `${prev}\n${extra}` : extra));
+  }
+
+  async function pasteClip() {
+    setError(null);
+    try {
+      if (navigator.clipboard?.read) {
+        const items = await navigator.clipboard.read();
+        const files: File[] = [];
+        for (const item of items) {
+          const type = item.types.find((t) => t.startsWith("image/") || t.startsWith("video/") || t === "text/plain");
+          if (!type) continue;
+          const blob = await item.getType(type);
+          if (type === "text/plain") {
+            const text = await blob.text();
+            if (text.trim()) setLog((prev) => (prev ? `${prev}\n${text}` : text));
+          } else {
+            const ext = type.split("/")[1] || "bin";
+            files.push(new File([blob], `paste.${ext}`, { type }));
+          }
+        }
+        if (files.length) await addFiles(files);
+        if (!files.length && items.length) setNote("Pasted.");
+        return;
+      }
+    } catch {
+      /* fall through to prompt */
+    }
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text.trim()) {
+        setLog((prev) => (prev ? `${prev}\n${text}` : text));
+        setNote("Pasted the clipboard.");
+        return;
+      }
+    } catch {
+      setError("Allow paste, or use Upload.");
+    }
+  }
 
   async function toggle() {
     if (!data) return;
@@ -153,7 +248,17 @@ function OwnerAuto() {
         </div>
       </dl>
 
-      <form onSubmit={(e) => void onSolve(e)} className="mt-6 rounded-2xl border border-ink/10 bg-ivory p-5 text-ink">
+      <form
+        onSubmit={(e) => void onSolve(e)}
+        onPaste={(e) => {
+          const files = e.clipboardData.files;
+          if (files?.length) {
+            e.preventDefault();
+            void addFiles(files);
+          }
+        }}
+        className="mt-6 rounded-2xl border border-ink/10 bg-ivory p-5 text-ink"
+      >
         <p className="text-[10px] tracking-[0.2em] text-bronze uppercase">Bugs & red logs</p>
         <h2 className="mt-1 font-display text-2xl">Paste the error. This desk names the fix.</h2>
         <Label htmlFor="log" className="mt-3 block">
@@ -165,11 +270,46 @@ function OwnerAuto() {
           onChange={(e) => setLog(e.target.value)}
           rows={5}
           className="mt-1 w-full rounded-xl border border-ink/10 bg-white p-3 text-sm text-ink"
-          placeholder="No Output Directory named dist…  or  node:fs has been externalized…"
+          placeholder="Paste a log, or upload a screenshot / code / video below."
         />
-        <Button type="submit" className="mt-3" disabled={busy}>
-          Solve
-        </Button>
+        {clips.length ? (
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+            {clips.map((c) => (
+              <li key={c.name + (c.url || "")} className="overflow-hidden rounded-xl border border-ink/10 bg-white">
+                {c.kind === "image" && c.url ? (
+                  <img src={c.url} alt={c.name} className="h-28 w-full object-cover" />
+                ) : c.kind === "video" && c.url ? (
+                  <video src={c.url} controls className="h-28 w-full object-cover" />
+                ) : (
+                  <p className="p-3 font-mono text-xs">{c.name}</p>
+                )}
+                <p className="truncate px-2 py-1 text-[10px] text-ink-muted">{c.name}</p>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        <input
+          ref={fileRef}
+          type="file"
+          accept={ACCEPT}
+          multiple
+          className="sr-only"
+          onChange={(e) => {
+            if (e.target.files?.length) void addFiles(e.target.files);
+            e.target.value = "";
+          }}
+        />
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button type="submit" disabled={busy}>
+            Solve
+          </Button>
+          <Button type="button" variant="ivory" disabled={busy} onClick={() => fileRef.current?.click()}>
+            Upload image, code, or video
+          </Button>
+          <Button type="button" variant="outline" disabled={busy} onClick={() => void pasteClip()}>
+            Paste
+          </Button>
+        </div>
         <ul className="mt-4 space-y-3 text-sm">
           {(hits.length ? hits : data?.bugs || []).map((b) => (
             <li key={b.id} className="rounded-xl border border-ink/10 bg-white p-3">
